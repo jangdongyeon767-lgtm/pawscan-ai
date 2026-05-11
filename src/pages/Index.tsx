@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Sparkles,
   ShieldCheck,
@@ -13,10 +14,28 @@ import {
   Cat,
   Dog,
   Award,
+  LogOut,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+
+const HEALTH_OPTIONS = [
+  "관절·고관절",
+  "피부·알러지",
+  "소화·장 트러블",
+  "치아·구강",
+  "비만·체중관리",
+  "심장·혈관",
+  "신장·요로",
+  "눈·귀",
+] as const;
+type HealthConcern = (typeof HEALTH_OPTIONS)[number];
 
 const AMAZON_TAG = "YOUR_AMAZON_ID";
 const amazonUrl = (q: string) =>
