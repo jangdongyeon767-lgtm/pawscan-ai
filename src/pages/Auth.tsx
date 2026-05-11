@@ -42,12 +42,6 @@ export default function Auth() {
     }
   };
 
-  const { user } = useAuth();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) navigate("/", { replace: true });
