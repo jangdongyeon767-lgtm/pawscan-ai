@@ -52,6 +52,8 @@ type PetProfile = {
   breed: string;
   weight: string;
   goal: Goal;
+  healthConcerns: HealthConcern[];
+  characteristics: string;
 };
 
 type Product = {
