@@ -36,7 +36,7 @@ type PetProfile = {
 };
 
 type Product = {
-  category: "Food" | "Treats" | "Toys" | "Supplement";
+  category: "사료" | "간식" | "장난감" | "영양제";
   name: string;
   brand: string;
   rating: number;
@@ -47,46 +47,50 @@ type Product = {
 };
 
 const GOAL_LABELS: Record<Goal, string> = {
-  weight_loss: "Weight Loss",
-  healthy_skin: "Healthy Skin & Coat",
-  high_energy: "High Energy",
-  dental_care: "Dental Care",
+  weight_loss: "체중 감량",
+  healthy_skin: "피부·모질 개선",
+  high_energy: "활동량 보충",
+  dental_care: "치아 관리",
 };
 
 const AGE_LABELS: Record<AgeStage, string> = {
-  puppy: "Puppy / Kitten",
-  adult: "Adult",
-  senior: "Senior",
+  puppy: "퍼피 / 키튼",
+  adult: "성견 / 성묘",
+  senior: "시니어",
 };
 
 function buildRecommendations(p: PetProfile): Product[] {
-  const species = p.petType === "dog" ? "Dog" : "Cat";
+  const speciesEn = p.petType === "dog" ? "Dog" : "Cat";
+  const speciesKo = p.petType === "dog" ? "강아지" : "고양이";
   const goalText = GOAL_LABELS[p.goal];
 
-  const foodByGoal: Record<Goal, { brand: string; name: string; query: string; reason: string }> = {
+  const foodByGoal: Record<
+    Goal,
+    { brand: string; name: string; query: string; reason: string }
+  > = {
     weight_loss: {
       brand: "Hill's Science Diet",
-      name: `Perfect Weight ${species} Food`,
-      query: `Hill's Science Diet Perfect Weight ${species} Food`,
-      reason: `Lean formula sized for ${p.weight || "—"} lbs`,
+      name: `Perfect Weight ${speciesEn} Food`,
+      query: `Hill's Science Diet Perfect Weight ${speciesEn} Food`,
+      reason: `${p.weight || "—"} lbs 체중에 맞춘 저칼로리 포뮬러`,
     },
     healthy_skin: {
       brand: "Wellness CORE",
-      name: `Skin & Coat ${species} Recipe with Salmon`,
-      query: `Wellness CORE Skin Coat Salmon ${species}`,
-      reason: "Omega-3 rich salmon for coat shine",
+      name: `Skin & Coat ${speciesEn} Recipe with Salmon`,
+      query: `Wellness CORE Skin Coat Salmon ${speciesEn}`,
+      reason: "오메가-3 풍부한 연어로 모질 개선",
     },
     high_energy: {
       brand: "Purina Pro Plan",
-      name: `Sport 30/20 High-Protein ${species} Food`,
-      query: `Purina Pro Plan Sport 30 20 ${species}`,
-      reason: "30% protein for active lifestyle",
+      name: `Sport 30/20 High-Protein ${speciesEn} Food`,
+      query: `Purina Pro Plan Sport 30 20 ${speciesEn}`,
+      reason: "활동량 많은 반려동물을 위한 30% 단백질",
     },
     dental_care: {
       brand: "Royal Canin",
-      name: `Dental Care ${species} Formula`,
-      query: `Royal Canin Dental Care ${species}`,
-      reason: "Kibble shape reduces tartar",
+      name: `Dental Care ${speciesEn} Formula`,
+      query: `Royal Canin Dental Care ${speciesEn}`,
+      reason: "치석 감소에 도움 되는 키블 형태",
     },
   };
 
@@ -94,7 +98,7 @@ function buildRecommendations(p: PetProfile): Product[] {
 
   return [
     {
-      category: "Food",
+      category: "사료",
       brand: food.brand,
       name: food.name,
       rating: 4.7,
@@ -104,17 +108,17 @@ function buildRecommendations(p: PetProfile): Product[] {
       query: food.query,
     },
     {
-      category: "Treats",
+      category: "간식",
       brand: "Blue Buffalo",
       name: `Wilderness Trail Treats — ${AGE_LABELS[p.age]}`,
       rating: 4.8,
       reviews: "12,400+",
       price: "$9.49",
-      matchReason: `Grain-free, sized for ${p.breed || species.toLowerCase()}`,
-      query: `Blue Buffalo Wilderness Trail Treats ${species}`,
+      matchReason: `그레인프리 · ${p.breed || speciesKo}에 맞춘 사이즈`,
+      query: `Blue Buffalo Wilderness Trail Treats ${speciesEn}`,
     },
     {
-      category: "Toys",
+      category: "장난감",
       brand: "KONG",
       name:
         p.petType === "dog"
@@ -125,12 +129,13 @@ function buildRecommendations(p: PetProfile): Product[] {
       price: "$12.99",
       matchReason:
         p.goal === "high_energy"
-          ? "Built for high-energy play"
-          : "Mental stimulation & enrichment",
-      query: p.petType === "dog" ? "KONG Classic Dog Toy" : "KONG feather cat toy",
+          ? "활동량이 많은 반려동물에 최적화"
+          : "두뇌 자극 및 행동 풍부화",
+      query:
+        p.petType === "dog" ? "KONG Classic Dog Toy" : "KONG feather cat toy",
     },
     {
-      category: "Supplement",
+      category: "영양제",
       brand: "Zesty Paws",
       name:
         p.goal === "healthy_skin"
@@ -141,14 +146,14 @@ function buildRecommendations(p: PetProfile): Product[] {
       rating: 4.6,
       reviews: "23,100+",
       price: "$24.95",
-      matchReason: `Targeted for ${goalText.toLowerCase()}`,
-      query: `Zesty Paws ${species} ${goalText}`,
+      matchReason: `${goalText}에 맞춘 타겟 보충제`,
+      query: `Zesty Paws ${speciesEn} ${goalText}`,
     },
   ];
 }
 
 const Index = () => {
-  const [step, setStep] = useState<number>(0); // 0 = closed
+  const [step, setStep] = useState<number>(0);
   const [profile, setProfile] = useState<PetProfile>({
     name: "",
     petType: "dog",
@@ -157,7 +162,10 @@ const Index = () => {
     weight: "",
     goal: "healthy_skin",
   });
-  const [results, setResults] = useState<{ profile: PetProfile; products: Product[] } | null>(null);
+  const [results, setResults] = useState<{
+    profile: PetProfile;
+    products: Product[];
+  } | null>(null);
 
   const startMatching = () => {
     setResults(null);
@@ -175,7 +183,8 @@ const Index = () => {
     );
   };
 
-  const petName = profile.name.trim() || (profile.petType === "dog" ? "Your Dog" : "Your Cat");
+  const petName =
+    profile.name.trim() || (profile.petType === "dog" ? "우리 강아지" : "우리 고양이");
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -199,7 +208,7 @@ const Index = () => {
           </div>
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
             <Award className="h-4 w-4 text-primary" />
-            AAFCO-aligned matching
+            AAFCO 기준 매칭
           </div>
         </div>
       </header>
@@ -209,15 +218,15 @@ const Index = () => {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground mb-6 shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Our Proprietary Matching Logic
+            자체 개발 매칭 로직
           </div>
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-foreground">
-            The AI-Powered <br className="hidden sm:block" />
-            <span className="text-primary">Marketplace Tailored to Your Pet.</span>
+            우리 아이만을 위한 <br className="hidden sm:block" />
+            <span className="text-primary">AI 펫 마켓플레이스.</span>
           </h1>
           <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Find the perfect food, treats, and toys matched specifically to your pet's
-            age, breed, and weight.
+            반려동물의 나이, 견종·묘종, 체중에 꼭 맞는 사료와 간식, 장난감을
+            찾아드립니다.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
@@ -227,10 +236,10 @@ const Index = () => {
               className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
             >
               <Sparkles className="mr-2 h-5 w-5" />
-              Find My Pet's Match
+              우리 아이 맞춤 찾기
             </Button>
             <p className="text-xs text-muted-foreground">
-              Free • No sign-up required • Takes under 60 seconds
+              무료 · 회원가입 불필요 · 60초 이내 완료
             </p>
           </div>
         </div>
@@ -240,18 +249,18 @@ const Index = () => {
           {[
             {
               icon: Award,
-              label: "AAFCO Standards",
-              sub: "Nutritional matching aligned with AAFCO standards",
+              label: "AAFCO 기준",
+              sub: "AAFCO 영양 기준에 맞춘 매칭 로직",
             },
             {
               icon: ShieldCheck,
-              label: "Curated Marketplace",
-              sub: "Hand-picked top-rated brands on Amazon",
+              label: "큐레이션 마켓",
+              sub: "Amazon에서 검증된 상위 브랜드만 엄선",
             },
             {
               icon: Lock,
-              label: "Privacy First",
-              sub: "Your pet's profile is never stored on our servers",
+              label: "프라이버시 우선",
+              sub: "반려동물 프로필은 서버에 저장되지 않습니다",
             },
           ].map((f) => (
             <div
@@ -277,20 +286,19 @@ const Index = () => {
             <div className="p-5 border-b border-border flex items-center justify-between">
               <div>
                 <div className="text-xs text-muted-foreground">
-                  Step {step} of 5
+                  {step} / 5 단계
                 </div>
-                <div className="font-semibold mt-0.5">Find My Pet's Match</div>
+                <div className="font-semibold mt-0.5">우리 아이 맞춤 찾기</div>
               </div>
               <button
                 onClick={closeWizard}
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Close"
+                aria-label="닫기"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Progress bar */}
             <div className="h-1 bg-secondary">
               <div
                 className="h-full bg-primary transition-all"
@@ -301,11 +309,11 @@ const Index = () => {
             <div className="p-6 space-y-5 min-h-[280px]">
               {step === 1 && (
                 <>
-                  <h3 className="text-lg font-semibold">What kind of pet do you have?</h3>
+                  <h3 className="text-lg font-semibold">반려동물 종류는 무엇인가요?</h3>
                   <div className="grid grid-cols-2 gap-3">
                     {([
-                      { v: "dog", icon: Dog, label: "Dog" },
-                      { v: "cat", icon: Cat, label: "Cat" },
+                      { v: "dog", icon: Dog, label: "강아지" },
+                      { v: "cat", icon: Cat, label: "고양이" },
                     ] as const).map((opt) => (
                       <button
                         key={opt.v}
@@ -322,10 +330,10 @@ const Index = () => {
                     ))}
                   </div>
                   <div className="space-y-2 pt-2">
-                    <Label htmlFor="petName">Pet's name (optional)</Label>
+                    <Label htmlFor="petName">이름 (선택)</Label>
                     <Input
                       id="petName"
-                      placeholder="e.g., Bailey"
+                      placeholder="예: 베일리"
                       value={profile.name}
                       onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                       maxLength={40}
@@ -336,9 +344,9 @@ const Index = () => {
 
               {step === 2 && (
                 <>
-                  <h3 className="text-lg font-semibold">Life stage</h3>
+                  <h3 className="text-lg font-semibold">생애 단계</h3>
                   <p className="text-sm text-muted-foreground">
-                    We use this to align with AAFCO life-stage nutrition.
+                    AAFCO 생애 단계 영양 기준에 맞춰 매칭합니다.
                   </p>
                   <div className="space-y-2">
                     {(Object.keys(AGE_LABELS) as AgeStage[]).map((a) => (
@@ -363,18 +371,18 @@ const Index = () => {
 
               {step === 3 && (
                 <>
-                  <h3 className="text-lg font-semibold">Breed</h3>
+                  <h3 className="text-lg font-semibold">견종 / 묘종</h3>
                   <p className="text-sm text-muted-foreground">
-                    Helps us pick portion sizes and chew durability.
+                    급여량과 장난감 내구성 추천에 활용됩니다.
                   </p>
                   <div className="space-y-2">
-                    <Label htmlFor="breed">Breed</Label>
+                    <Label htmlFor="breed">품종</Label>
                     <Input
                       id="breed"
                       placeholder={
                         profile.petType === "dog"
-                          ? "e.g., Golden Retriever"
-                          : "e.g., Maine Coon"
+                          ? "예: 골든 리트리버"
+                          : "예: 메인쿤"
                       }
                       value={profile.breed}
                       onChange={(e) => setProfile({ ...profile, breed: e.target.value })}
@@ -386,19 +394,19 @@ const Index = () => {
 
               {step === 4 && (
                 <>
-                  <h3 className="text-lg font-semibold">Weight</h3>
+                  <h3 className="text-lg font-semibold">체중</h3>
                   <p className="text-sm text-muted-foreground">
-                    Used to calculate calorie targets.
+                    하루 권장 칼로리 계산에 사용됩니다.
                   </p>
                   <div className="space-y-2">
-                    <Label htmlFor="weight">Weight (lbs)</Label>
+                    <Label htmlFor="weight">체중 (lbs)</Label>
                     <Input
                       id="weight"
                       type="number"
                       inputMode="decimal"
                       min={1}
                       max={250}
-                      placeholder="e.g., 45"
+                      placeholder="예: 45"
                       value={profile.weight}
                       onChange={(e) => setProfile({ ...profile, weight: e.target.value })}
                     />
@@ -408,9 +416,9 @@ const Index = () => {
 
               {step === 5 && (
                 <>
-                  <h3 className="text-lg font-semibold">Primary goal</h3>
+                  <h3 className="text-lg font-semibold">주요 목표</h3>
                   <p className="text-sm text-muted-foreground">
-                    Pick what matters most right now.
+                    지금 가장 중요한 한 가지를 선택해 주세요.
                   </p>
                   <div className="grid grid-cols-2 gap-3">
                     {(Object.keys(GOAL_LABELS) as Goal[]).map((g) => (
@@ -439,17 +447,17 @@ const Index = () => {
                 className="rounded-full"
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
+                이전
               </Button>
               {step < 5 ? (
                 <Button onClick={next} className="rounded-full">
-                  Next
+                  다음
                   <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               ) : (
                 <Button onClick={finish} className="rounded-full">
                   <Sparkles className="h-4 w-4 mr-1" />
-                  Show My Matches
+                  맞춤 결과 보기
                 </Button>
               )}
             </div>
@@ -464,14 +472,16 @@ const Index = () => {
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <div className="text-xs uppercase tracking-wider text-primary font-medium">
-                  Recommended for You
+                  맞춤 추천
                 </div>
                 <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1">
-                  Matched for {petName}
+                  {petName}를 위한 매칭 결과
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
                   {AGE_LABELS[results.profile.age]} ·{" "}
-                  {results.profile.breed || (results.profile.petType === "dog" ? "Dog" : "Cat")} ·{" "}
+                  {results.profile.breed ||
+                    (results.profile.petType === "dog" ? "강아지" : "고양이")}{" "}
+                  ·{" "}
                   {results.profile.weight ? `${results.profile.weight} lbs` : "—"} ·{" "}
                   {GOAL_LABELS[results.profile.goal]}
                 </p>
@@ -482,7 +492,7 @@ const Index = () => {
                 onClick={startMatching}
                 className="rounded-full"
               >
-                Re-match
+                다시 매칭
               </Button>
             </div>
 
@@ -493,8 +503,8 @@ const Index = () => {
             </div>
 
             <p className="text-[11px] text-muted-foreground mt-2">
-              FTC Disclosure: As an Amazon Associate, My Cat &amp; Dog Market earns from
-              qualifying purchases.
+              FTC 고지: My Cat &amp; Dog Market은 Amazon Associate 프로그램 참여자로,
+              적격 구매 시 수수료를 받을 수 있습니다.
             </p>
           </div>
         </section>
@@ -510,22 +520,27 @@ const Index = () => {
             <span className="font-medium text-foreground">My Cat &amp; Dog Market</span>
           </div>
           <p>
-            Nutritional matching aligned with AAFCO standards. Recommendations are based
-            on our proprietary matching logic and are informational only — not a
-            substitute for professional advice.
+            AAFCO 영양 기준에 맞춘 매칭 로직을 사용합니다. 추천 결과는 자체 매칭
+            로직을 기반으로 한 정보 제공용이며, 전문가의 진료를 대체하지 않습니다.
           </p>
           <p>
-            As an Amazon Associate, My Cat &amp; Dog Market earns from qualifying
-            purchases.
+            My Cat &amp; Dog Market은 Amazon Associate 프로그램 참여자로, 적격 구매 시
+            수수료를 받을 수 있습니다.
           </p>
-          <p>© {new Date().getFullYear()} My Cat &amp; Dog Market. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} My Cat &amp; Dog Market. 모든 권리 보유.</p>
         </div>
       </footer>
     </div>
   );
 };
 
-const ProductCard = ({ product, petName }: { product: Product; petName: string }) => (
+const ProductCard = ({
+  product,
+  petName,
+}: {
+  product: Product;
+  petName: string;
+}) => (
   <div className="rounded-2xl border border-border bg-card p-5 shadow-sm flex flex-col">
     <div className="flex items-center justify-between">
       <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
@@ -533,7 +548,7 @@ const ProductCard = ({ product, petName }: { product: Product; petName: string }
       </span>
       <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary text-[10px] font-semibold px-2 py-0.5">
         <Sparkles className="h-3 w-3" />
-        AI-Matched
+        AI 매칭
       </span>
     </div>
     <div className="mt-3">
@@ -546,7 +561,7 @@ const ProductCard = ({ product, petName }: { product: Product; petName: string }
       <span>({product.reviews})</span>
     </div>
     <div className="mt-3 rounded-lg bg-secondary/60 px-3 py-2 text-[11px] text-muted-foreground">
-      <span className="font-medium text-foreground">Matched for {petName}:</span>{" "}
+      <span className="font-medium text-foreground">{petName} 맞춤:</span>{" "}
       {product.matchReason}
     </div>
     <div className="mt-4 flex items-center justify-between">
@@ -558,7 +573,7 @@ const ProductCard = ({ product, petName }: { product: Product; petName: string }
       rel="noopener noreferrer sponsored"
       className="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-[hsl(var(--brand-amazon))] text-black font-semibold text-sm h-11 hover:shadow-md active:scale-[0.99] transition-all"
     >
-      Check Price on Amazon
+      Amazon 가격 확인
       <ExternalLink className="h-4 w-4" />
     </a>
   </div>
