@@ -459,8 +459,9 @@ const Index = () => {
               </div>
 
               <p className="text-[11px] text-muted-foreground mt-4">
-                As an Amazon Associate and Chewy Partner, I earn from qualifying
-                purchases.
+                FTC Disclosure: My Cat &amp; Dog Market participates in the Amazon
+                Associates and Chewy Partner programs. We may earn a commission from
+                qualifying purchases at no extra cost to you.
               </p>
             </div>
 
