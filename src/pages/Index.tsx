@@ -253,9 +253,45 @@ const Index = () => {
               My Cat &amp; Dog Market
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Award className="h-4 w-4 text-primary" />
-            AAFCO 기준 매칭
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground mr-2">
+              <Award className="h-4 w-4 text-primary" />
+              AAFCO 기준 매칭
+            </div>
+            {user ? (
+              <>
+                <span className="hidden sm:inline text-xs text-muted-foreground max-w-[160px] truncate">
+                  {user.email}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={signOut}
+                  className="rounded-full"
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  로그아웃
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate("/auth")}
+                  className="rounded-full"
+                >
+                  로그인
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => navigate("/auth")}
+                  className="rounded-full"
+                >
+                  회원가입
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
