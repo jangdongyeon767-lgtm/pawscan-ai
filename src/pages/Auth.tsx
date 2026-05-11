@@ -6,10 +6,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Auth() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
+
+  const oauth = async (provider: "google" | "apple") => {
+    setOauthLoading(provider);
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast({
+          title: "로그인 오류",
+          description: (result.error as any).message ?? "다시 시도해 주세요.",
+          variant: "destructive",
+        });
+        setOauthLoading(null);
+        return;
+      }
+      if (result.redirected) return;
+      navigate("/");
+    } catch (err: any) {
+      toast({ title: "오류", description: err.message, variant: "destructive" });
+      setOauthLoading(null);
+    }
+  };
+
   const { user } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
