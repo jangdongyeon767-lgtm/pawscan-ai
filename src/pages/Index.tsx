@@ -187,7 +187,9 @@ const Index = () => {
             <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
               <PawPrint className="h-5 w-5 text-primary" />
             </div>
-            <span className="font-semibold tracking-tight">PetGuard AI</span>
+            <span className="font-semibold tracking-tight text-base sm:text-lg" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif', letterSpacing: '-0.02em' }}>
+              My Cat &amp; Dog Market
+            </span>
           </div>
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-primary" />
@@ -204,12 +206,12 @@ const Index = () => {
             Powered by GPT-4o Vision
           </div>
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-foreground">
-            Know Exactly What <br className="hidden sm:block" />
-            <span className="text-primary">Your Dog Eats.</span>
+            Your Personalized <br className="hidden sm:block" />
+            <span className="text-primary">AI-Powered Pet Food Market.</span>
           </h1>
           <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            AI-powered nutritional analysis optimized for AAFCO standards.
-            Trusted by modern pet parents.
+            Analyze your dog's current bowl and find the best prices across the
+            web, tailored just for you.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
@@ -481,7 +483,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border">
         <div className="container py-8 text-xs text-muted-foreground flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-          <div>© {new Date().getFullYear()} PetGuard AI — Made for modern US pet parents</div>
+          <div>© {new Date().getFullYear()} My Cat &amp; Dog Market — Made for modern US pet parents</div>
           <div className="flex gap-4">
             <span>AAFCO-aligned</span>
             <span>FTC-compliant disclosures</span>
