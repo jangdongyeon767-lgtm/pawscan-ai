@@ -369,7 +369,7 @@ const Index = () => {
             <div className="p-5 border-b border-border flex items-center justify-between">
               <div>
                 <div className="text-xs text-muted-foreground">
-                  {step} / 5 단계
+                  {step} / 6 단계
                 </div>
                 <div className="font-semibold mt-0.5">우리 아이 맞춤 찾기</div>
               </div>
@@ -385,7 +385,7 @@ const Index = () => {
             <div className="h-1 bg-secondary">
               <div
                 className="h-full bg-primary transition-all"
-                style={{ width: `${(step / 5) * 100}%` }}
+                style={{ width: `${(step / 6) * 100}%` }}
               />
             </div>
 
