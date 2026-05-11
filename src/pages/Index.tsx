@@ -322,7 +322,7 @@ const Index = () => {
               우리 아이 맞춤 찾기
             </Button>
             <p className="text-xs text-muted-foreground">
-              무료 · 회원가입 불필요 · 60초 이내 완료
+              무료 · 60초 이내 완료 · 로그인 시 프로필 저장
             </p>
           </div>
         </div>
@@ -343,7 +343,7 @@ const Index = () => {
             {
               icon: Lock,
               label: "프라이버시 우선",
-              sub: "반려동물 프로필은 서버에 저장되지 않습니다",
+              sub: "프로필은 본인 계정에서만 안전하게 관리됩니다",
             },
           ].map((f) => (
             <div
