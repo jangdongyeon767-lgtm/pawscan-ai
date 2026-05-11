@@ -613,6 +613,25 @@ const Index = () => {
                   {results.profile.weight ? `${results.profile.weight} lbs` : "—"} ·{" "}
                   {GOAL_LABELS[results.profile.goal]}
                 </p>
+                {(results.profile.healthConcerns.length > 0 ||
+                  results.profile.characteristics) && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    {results.profile.healthConcerns.map((h) => (
+                      <span
+                        key={h}
+                        className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium px-2 py-0.5"
+                      >
+                        <Heart className="h-3 w-3" />
+                        {h}
+                      </span>
+                    ))}
+                    {results.profile.characteristics && (
+                      <span className="text-[11px] text-muted-foreground italic">
+                        "{results.profile.characteristics}"
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               <Button
                 variant="outline"
