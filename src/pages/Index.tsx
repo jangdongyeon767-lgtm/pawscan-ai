@@ -48,46 +48,46 @@ type Analysis = {
 
 const MOCK_ANALYSIS: Analysis = {
   score: 72,
-  brand: "Sample Adult Chicken Kibble",
-  lifeStage: "Adult Maintenance",
-  crudeProtein: "26% min",
-  crudeFat: "15% min",
-  fillers: "Corn, Soy detected",
-  servingSize: "1 cup (4 oz) per 30 lbs",
+  brand: "샘플 어덜트 치킨 키블",
+  lifeStage: "성견 유지식",
+  crudeProtein: "최소 26%",
+  crudeFat: "최소 15%",
+  fillers: "옥수수, 대두 검출",
+  servingSize: "30 lbs당 1컵 (4 oz)",
   allergens: [
-    { name: "Corn", present: true },
-    { name: "Wheat", present: false },
-    { name: "Soy", present: true },
-    { name: "Artificial Preservatives (BHA/BHT)", present: false },
+    { name: "옥수수", present: true },
+    { name: "밀", present: false },
+    { name: "대두", present: true },
+    { name: "인공 방부제 (BHA/BHT)", present: false },
   ],
   pros: [
-    "Real chicken listed as #1 ingredient",
-    "Meets AAFCO nutritional adequacy for adult dogs",
-    "Includes added omega-3 for coat support",
+    "닭고기가 1순위 원재료로 표기됨",
+    "성견 AAFCO 영양 기준 충족",
+    "모질 관리를 위한 오메가-3 추가 함유",
   ],
   cons: [
-    "Contains corn — common filler & allergen",
-    "Soy protein may trigger sensitivities",
-    "Crude protein below premium threshold (30%+)",
+    "옥수수 함유 — 흔한 충전재이자 알러지 유발 성분",
+    "대두 단백질이 민감 반응을 유발할 수 있음",
+    "조단백 함량이 프리미엄 기준(30%+) 미달",
   ],
   vetNote:
-    "Glucosamine and chondroitin levels were not listed. Consult your vet for specific nutritional gaps.",
+    "글루코사민 및 콘드로이친 함량이 표기되어 있지 않습니다. 영양 보충에 대해서는 수의사와 상담하세요.",
   swaps: [
     {
       name: "Open Farm RawMix Ancient Grains",
-      tagline: "Grain-inclusive · 32% Crude Protein",
-      bagSize: "20 lb bag",
+      tagline: "곡물 포함 · 조단백 32%",
+      bagSize: "20 lb (약 9kg)",
       protein: "32%",
       chewy: 79.99,
       amazon: 89.49,
       rating: 4.8,
       reviews: "12,400+",
-      badge: "Top Pick",
+      badge: "추천 1순위",
     },
     {
       name: "The Honest Kitchen Whole Grain Chicken",
-      tagline: "Dehydrated whole food · Human-grade",
-      bagSize: "10 lb box (makes 40 lbs)",
+      tagline: "건조 자연식 · 휴먼 그레이드",
+      bagSize: "10 lb 박스 (40 lbs 분량)",
       protein: "27%",
       chewy: 109.95,
       amazon: 119.99,
@@ -96,14 +96,14 @@ const MOCK_ANALYSIS: Analysis = {
     },
     {
       name: "Stella & Chewy's Wild Red Kibble",
-      tagline: "High-protein · No corn, wheat, or soy",
-      bagSize: "21 lb bag",
+      tagline: "고단백 · 옥수수·밀·대두 무첨가",
+      bagSize: "21 lb (약 9.5kg)",
       protein: "38%",
       chewy: 84.99,
       amazon: 92.5,
       rating: 4.9,
       reviews: "3,800+",
-      badge: "Highest Protein",
+      badge: "최고 단백질",
     },
   ],
 };
@@ -144,7 +144,7 @@ const Index = () => {
       }, 50);
     } catch (e) {
       setError(
-        "Camera access was blocked. Please allow camera permissions and try again."
+        "카메라 접근이 차단되었습니다. 카메라 권한을 허용한 뒤 다시 시도해 주세요."
       );
     }
   };
@@ -173,10 +173,10 @@ const Index = () => {
 
   const scoreLabel =
     analysis && analysis.score >= 80
-      ? "Safe — Vet-recommended quality"
+      ? "안전 — 수의사 권장 품질"
       : analysis && analysis.score >= 60
-        ? "Caution — Room to improve"
-        : "Alert — Consider switching";
+        ? "주의 — 개선 여지 있음"
+        : "경고 — 교체 권장";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -193,7 +193,7 @@ const Index = () => {
           </div>
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-primary" />
-            AAFCO-aligned analysis
+            AAFCO 기준 분석
           </div>
         </div>
       </header>
@@ -203,15 +203,15 @@ const Index = () => {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground mb-6 shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Powered by GPT-4o Vision
+            GPT-4o Vision 기반
           </div>
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-foreground">
-            Your Personalized <br className="hidden sm:block" />
-            <span className="text-primary">AI-Powered Pet Food Market.</span>
+            맞춤형 <br className="hidden sm:block" />
+            <span className="text-primary">AI 펫푸드 마켓.</span>
           </h1>
           <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Analyze your dog's current bowl and find the best prices across the
-            web, tailored just for you.
+            우리 강아지의 사료를 분석하고, 웹 전체에서 가장 좋은 가격을
+            맞춤으로 찾아드립니다.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
@@ -221,10 +221,10 @@ const Index = () => {
               className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
             >
               <Camera className="mr-2 h-5 w-5" />
-              Scan Label
+              사료 라벨 스캔하기
             </Button>
             <p className="text-xs text-muted-foreground">
-              Free • No signup • Works on mobile & desktop
+              무료 • 회원가입 불필요 • 모바일·데스크톱 모두 지원
             </p>
           </div>
 
@@ -239,9 +239,9 @@ const Index = () => {
         {/* Trust strip */}
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
           {[
-            { icon: ShieldCheck, label: "AAFCO Standards", sub: "Adult & puppy life stages" },
-            { icon: Lock, label: "Private by default", sub: "Photos never stored" },
-            { icon: Stethoscope, label: "Vet-informed", sub: "Built with DVM guidance" },
+            { icon: ShieldCheck, label: "AAFCO 기준", sub: "성견·퍼피 생애 단계 대응" },
+            { icon: Lock, label: "프라이버시 우선", sub: "사진은 서버에 저장되지 않음" },
+            { icon: Stethoscope, label: "수의사 자문", sub: "DVM 가이드 기반 설계" },
           ].map((f) => (
             <div
               key={f.label}
@@ -265,13 +265,13 @@ const Index = () => {
           <div className="w-full max-w-lg rounded-3xl bg-card overflow-hidden shadow-2xl">
             <div className="p-4 border-b border-border flex items-center justify-between">
               <div className="font-medium text-sm">
-                Point at the Guaranteed Analysis or Ingredients panel
+                보장성분 또는 원재료 표시 부분을 비춰주세요
               </div>
               <button
                 onClick={stopCamera}
                 className="text-xs text-muted-foreground hover:text-foreground"
               >
-                Cancel
+                취소
               </button>
             </div>
             <div className="relative aspect-[4/3] bg-black">
@@ -285,7 +285,7 @@ const Index = () => {
               {scanning && (
                 <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white gap-3">
                   <Loader2 className="h-8 w-8 animate-spin" />
-                  <div className="text-sm">Analyzing label with GPT-4o Vision…</div>
+                  <div className="text-sm">GPT-4o Vision으로 라벨 분석 중…</div>
                 </div>
               )}
             </div>
@@ -310,7 +310,7 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
-                  Analysis Dashboard
+                  분석 대시보드
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
                   {analysis.brand}
@@ -318,7 +318,7 @@ const Index = () => {
               </div>
               <Button variant="outline" size="sm" onClick={reset} className="rounded-full">
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Scan again
+                다시 스캔
               </Button>
             </div>
 
@@ -330,14 +330,14 @@ const Index = () => {
                   className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-[hsl(var(--${scoreToken}))]/10 text-[hsl(var(--${scoreToken}))]`}
                 >
                   <span className={`h-1.5 w-1.5 rounded-full bg-[hsl(var(--${scoreToken}))]`} />
-                  Safety Score
+                  안전 점수
                 </div>
                 <div className="text-xl font-semibold mt-3">{scoreLabel}</div>
                 <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                  <Stat label="Life Stage" value={analysis.lifeStage} />
-                  <Stat label="Crude Protein" value={analysis.crudeProtein} />
-                  <Stat label="Crude Fat" value={analysis.crudeFat} />
-                  <Stat label="Serving" value={analysis.servingSize} />
+                  <Stat label="생애 단계" value={analysis.lifeStage} />
+                  <Stat label="조단백" value={analysis.crudeProtein} />
+                  <Stat label="조지방" value={analysis.crudeFat} />
+                  <Stat label="급여량" value={analysis.servingSize} />
                 </div>
               </div>
             </div>
@@ -346,30 +346,30 @@ const Index = () => {
             <div className="grid sm:grid-cols-3 gap-4">
               <BreakdownCard
                 icon={Beef}
-                title="Protein"
+                title="단백질"
                 value={analysis.crudeProtein}
-                sub="Source: Chicken (1st)"
+                sub="원재료: 닭고기 (1순위)"
                 tone="success"
               />
               <BreakdownCard
                 icon={Droplet}
-                title="Fat"
+                title="지방"
                 value={analysis.crudeFat}
-                sub="Within AAFCO range"
+                sub="AAFCO 권장 범위 이내"
                 tone="warning"
               />
               <BreakdownCard
                 icon={Wheat}
-                title="Fillers"
+                title="충전재"
                 value={analysis.fillers}
-                sub="Limit recommended"
+                sub="섭취 제한 권장"
                 tone="danger"
               />
             </div>
 
             {/* Allergens */}
             <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
-              <h3 className="font-semibold mb-4">Allergen & Filler Check</h3>
+              <h3 className="font-semibold mb-4">알러지·충전재 체크</h3>
               <div className="grid sm:grid-cols-2 gap-3">
                 {analysis.allergens.map((a) => (
                   <div
@@ -388,7 +388,7 @@ const Index = () => {
                     <div className="text-sm">
                       <div className="font-medium">{a.name}</div>
                       <div className="text-xs text-muted-foreground">
-                        {a.present ? "Detected on label" : "Not detected"}
+                        {a.present ? "라벨에서 검출됨" : "검출되지 않음"}
                       </div>
                     </div>
                   </div>
@@ -401,7 +401,7 @@ const Index = () => {
               <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-[hsl(var(--success))]" />
-                  Strengths
+                  장점
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {analysis.pros.map((p) => (
@@ -415,7 +415,7 @@ const Index = () => {
               <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-[hsl(var(--warning))]" />
-                  Watch-outs
+                  주의사항
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   {analysis.cons.map((p) => (
@@ -433,7 +433,7 @@ const Index = () => {
               <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 text-sm flex gap-3">
                 <Stethoscope className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-medium text-foreground">Vet Note</div>
+                  <div className="font-medium text-foreground">수의사 메모</div>
                   <p className="text-muted-foreground mt-1">{analysis.vetNote}</p>
                 </div>
               </div>
@@ -444,10 +444,10 @@ const Index = () => {
               <div className="flex items-end justify-between mb-4">
                 <div>
                   <div className="text-xs uppercase tracking-wider text-primary font-medium">
-                    Smart Swaps
+                    스마트 대안
                   </div>
                   <h3 className="text-2xl font-semibold mt-1">
-                    Premium alternatives for your dog
+                    우리 강아지를 위한 프리미엄 대체 사료
                   </h3>
                 </div>
               </div>
@@ -459,22 +459,22 @@ const Index = () => {
               </div>
 
               <p className="text-[11px] text-muted-foreground mt-4">
-                FTC Disclosure: My Cat &amp; Dog Market participates in the Amazon
-                Associates and Chewy Partner programs. We may earn a commission from
-                qualifying purchases at no extra cost to you.
+                FTC 고지: My Cat &amp; Dog Market은 Amazon Associates 및 Chewy
+                Partner 프로그램에 참여하고 있으며, 적격 구매에 대해 추가 비용
+                없이 일정 수수료를 받을 수 있습니다.
               </p>
             </div>
 
             {/* Disclaimers */}
             <div className="rounded-2xl border border-border bg-secondary/40 p-5 text-xs text-muted-foreground space-y-2">
               <p>
-                <strong className="text-foreground">NOT VETERINARY ADVICE.</strong>{" "}
-                This AI tool provides informational insights only. Always consult a
-                vet before changing diets.
+                <strong className="text-foreground">의료 자문 아님.</strong>{" "}
+                본 AI 도구는 정보 제공용 인사이트만을 제공합니다. 사료를 변경하기
+                전 반드시 수의사와 상담하세요.
               </p>
               <p>
-                <strong className="text-foreground">Privacy:</strong> We process
-                photos in real-time. Images are not stored on our servers.
+                <strong className="text-foreground">개인정보:</strong> 사진은
+                실시간으로 처리되며, 당사 서버에 저장되지 않습니다.
               </p>
             </div>
           </div>
@@ -484,10 +484,10 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border">
         <div className="container py-8 text-xs text-muted-foreground flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-          <div>© {new Date().getFullYear()} My Cat &amp; Dog Market — Made for modern US pet parents</div>
+          <div>© {new Date().getFullYear()} My Cat &amp; Dog Market — 반려견 보호자를 위해 만들었습니다 🐾</div>
           <div className="flex gap-4">
-            <span>AAFCO-aligned</span>
-            <span>FTC-compliant disclosures</span>
+            <span>AAFCO 기준 준수</span>
+            <span>FTC 고지 준수</span>
           </div>
         </div>
       </footer>
@@ -543,7 +543,7 @@ const ScoreGauge = ({
           {score}
         </div>
         <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
-          out of 100
+          / 100점
         </div>
       </div>
     </div>
@@ -573,7 +573,7 @@ const BreakdownCard = ({
       <span
         className={`text-[10px] uppercase tracking-wider font-medium text-[hsl(var(--${tone}))]`}
       >
-        {tone === "success" ? "Safe" : tone === "warning" ? "Caution" : "Alert"}
+        {tone === "success" ? "안전" : tone === "warning" ? "주의" : "경고"}
       </span>
     </div>
     <div className="mt-4 text-sm text-muted-foreground">{title}</div>
@@ -623,7 +623,7 @@ const SwapCard = ({ swap }: { swap: SmartSwap }) => (
       >
         <span className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4" />
-          Buy on Chewy · Save $20
+          Chewy에서 구매 · $20 할인
         </span>
         <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 text-xs font-medium">
           ${swap.chewy.toFixed(2)}
@@ -636,7 +636,7 @@ const SwapCard = ({ swap }: { swap: SmartSwap }) => (
       >
         <span className="flex items-center gap-2">
           <Sparkles className="h-4 w-4" />
-          Buy on Amazon
+          Amazon에서 구매
         </span>
         <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 text-xs font-medium">
           ${swap.amazon.toFixed(2)}
