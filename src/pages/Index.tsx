@@ -174,6 +174,8 @@ function buildRecommendations(p: PetProfile): Product[] {
 }
 
 const Index = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState<number>(0);
   const [profile, setProfile] = useState<PetProfile>({
     name: "",
@@ -182,6 +184,8 @@ const Index = () => {
     breed: "",
     weight: "",
     goal: "healthy_skin",
+    healthConcerns: [],
+    characteristics: "",
   });
   const [results, setResults] = useState<{
     profile: PetProfile;
@@ -195,13 +199,35 @@ const Index = () => {
   const closeWizard = () => setStep(0);
   const next = () => setStep((s) => Math.min(s + 1, 6));
   const back = () => setStep((s) => Math.max(s - 1, 1));
-  const finish = () => {
+  const toggleHealth = (h: HealthConcern) =>
+    setProfile((p) => ({
+      ...p,
+      healthConcerns: p.healthConcerns.includes(h)
+        ? p.healthConcerns.filter((x) => x !== h)
+        : [...p.healthConcerns, h],
+    }));
+
+  const finish = async () => {
     setResults({ profile, products: buildRecommendations(profile) });
     setStep(0);
     setTimeout(
       () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }),
       80,
     );
+    if (user) {
+      const { error } = await supabase.from("pet_profiles").insert({
+        user_id: user.id,
+        name: profile.name || null,
+        pet_type: profile.petType,
+        age_stage: profile.age,
+        breed: profile.breed || null,
+        weight: profile.weight || null,
+        goal: profile.goal,
+        health_concerns: profile.healthConcerns,
+        characteristics: profile.characteristics || null,
+      });
+      if (!error) toast({ title: "프로필이 저장되었습니다" });
+    }
   };
 
   const petName =
