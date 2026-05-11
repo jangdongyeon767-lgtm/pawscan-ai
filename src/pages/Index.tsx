@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Sparkles,
   ShieldCheck,
@@ -13,10 +14,28 @@ import {
   Cat,
   Dog,
   Award,
+  LogOut,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+
+const HEALTH_OPTIONS = [
+  "관절·고관절",
+  "피부·알러지",
+  "소화·장 트러블",
+  "치아·구강",
+  "비만·체중관리",
+  "심장·혈관",
+  "신장·요로",
+  "눈·귀",
+] as const;
+type HealthConcern = (typeof HEALTH_OPTIONS)[number];
 
 const AMAZON_TAG = "YOUR_AMAZON_ID";
 const amazonUrl = (q: string) =>
@@ -33,6 +52,8 @@ type PetProfile = {
   breed: string;
   weight: string;
   goal: Goal;
+  healthConcerns: HealthConcern[];
+  characteristics: string;
 };
 
 type Product = {
@@ -153,6 +174,8 @@ function buildRecommendations(p: PetProfile): Product[] {
 }
 
 const Index = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState<number>(0);
   const [profile, setProfile] = useState<PetProfile>({
     name: "",
@@ -161,6 +184,8 @@ const Index = () => {
     breed: "",
     weight: "",
     goal: "healthy_skin",
+    healthConcerns: [],
+    characteristics: "",
   });
   const [results, setResults] = useState<{
     profile: PetProfile;
@@ -174,13 +199,35 @@ const Index = () => {
   const closeWizard = () => setStep(0);
   const next = () => setStep((s) => Math.min(s + 1, 6));
   const back = () => setStep((s) => Math.max(s - 1, 1));
-  const finish = () => {
+  const toggleHealth = (h: HealthConcern) =>
+    setProfile((p) => ({
+      ...p,
+      healthConcerns: p.healthConcerns.includes(h)
+        ? p.healthConcerns.filter((x) => x !== h)
+        : [...p.healthConcerns, h],
+    }));
+
+  const finish = async () => {
     setResults({ profile, products: buildRecommendations(profile) });
     setStep(0);
     setTimeout(
       () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }),
       80,
     );
+    if (user) {
+      const { error } = await supabase.from("pet_profiles").insert({
+        user_id: user.id,
+        name: profile.name || null,
+        pet_type: profile.petType,
+        age_stage: profile.age,
+        breed: profile.breed || null,
+        weight: profile.weight || null,
+        goal: profile.goal,
+        health_concerns: profile.healthConcerns,
+        characteristics: profile.characteristics || null,
+      });
+      if (!error) toast({ title: "프로필이 저장되었습니다" });
+    }
   };
 
   const petName =
@@ -206,9 +253,45 @@ const Index = () => {
               My Cat &amp; Dog Market
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Award className="h-4 w-4 text-primary" />
-            AAFCO 기준 매칭
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground mr-2">
+              <Award className="h-4 w-4 text-primary" />
+              AAFCO 기준 매칭
+            </div>
+            {user ? (
+              <>
+                <span className="hidden sm:inline text-xs text-muted-foreground max-w-[160px] truncate">
+                  {user.email}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={signOut}
+                  className="rounded-full"
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  로그아웃
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate("/auth")}
+                  className="rounded-full"
+                >
+                  로그인
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => navigate("/auth")}
+                  className="rounded-full"
+                >
+                  회원가입
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -239,7 +322,7 @@ const Index = () => {
               우리 아이 맞춤 찾기
             </Button>
             <p className="text-xs text-muted-foreground">
-              무료 · 회원가입 불필요 · 60초 이내 완료
+              무료 · 60초 이내 완료 · 로그인 시 프로필 저장
             </p>
           </div>
         </div>
@@ -260,7 +343,7 @@ const Index = () => {
             {
               icon: Lock,
               label: "프라이버시 우선",
-              sub: "반려동물 프로필은 서버에 저장되지 않습니다",
+              sub: "프로필은 본인 계정에서만 안전하게 관리됩니다",
             },
           ].map((f) => (
             <div
@@ -286,7 +369,7 @@ const Index = () => {
             <div className="p-5 border-b border-border flex items-center justify-between">
               <div>
                 <div className="text-xs text-muted-foreground">
-                  {step} / 5 단계
+                  {step} / 6 단계
                 </div>
                 <div className="font-semibold mt-0.5">우리 아이 맞춤 찾기</div>
               </div>
@@ -302,7 +385,7 @@ const Index = () => {
             <div className="h-1 bg-secondary">
               <div
                 className="h-full bg-primary transition-all"
-                style={{ width: `${(step / 5) * 100}%` }}
+                style={{ width: `${(step / 6) * 100}%` }}
               />
             </div>
 
@@ -437,6 +520,51 @@ const Index = () => {
                   </div>
                 </>
               )}
+
+              {step === 6 && (
+                <>
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-primary" />
+                    아픈 부위 · 특징
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    걱정되는 건강 부위를 모두 선택하고, 추가 특징이 있다면
+                    알려주세요. (선택)
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {HEALTH_OPTIONS.map((h) => {
+                      const active = profile.healthConcerns.includes(h);
+                      return (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => toggleHealth(h)}
+                          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                            active
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-card hover:border-primary/40"
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <Label htmlFor="characteristics">추가 특징 (선택)</Label>
+                    <Textarea
+                      id="characteristics"
+                      placeholder="예: 중성화 완료, 알러지 있음, 사료 잘 안 먹음, 활동량 많음..."
+                      value={profile.characteristics}
+                      onChange={(e) =>
+                        setProfile({ ...profile, characteristics: e.target.value })
+                      }
+                      maxLength={500}
+                      rows={4}
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="p-5 border-t border-border flex items-center justify-between gap-3">
@@ -449,7 +577,7 @@ const Index = () => {
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 이전
               </Button>
-              {step < 5 ? (
+              {step < 6 ? (
                 <Button onClick={next} className="rounded-full">
                   다음
                   <ArrowRight className="h-4 w-4 ml-1" />
@@ -485,6 +613,25 @@ const Index = () => {
                   {results.profile.weight ? `${results.profile.weight} lbs` : "—"} ·{" "}
                   {GOAL_LABELS[results.profile.goal]}
                 </p>
+                {(results.profile.healthConcerns.length > 0 ||
+                  results.profile.characteristics) && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    {results.profile.healthConcerns.map((h) => (
+                      <span
+                        key={h}
+                        className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium px-2 py-0.5"
+                      >
+                        <Heart className="h-3 w-3" />
+                        {h}
+                      </span>
+                    ))}
+                    {results.profile.characteristics && (
+                      <span className="text-[11px] text-muted-foreground italic">
+                        "{results.profile.characteristics}"
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               <Button
                 variant="outline"
