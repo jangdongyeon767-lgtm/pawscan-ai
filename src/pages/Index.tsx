@@ -520,6 +520,51 @@ const Index = () => {
                   </div>
                 </>
               )}
+
+              {step === 6 && (
+                <>
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-primary" />
+                    아픈 부위 · 특징
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    걱정되는 건강 부위를 모두 선택하고, 추가 특징이 있다면
+                    알려주세요. (선택)
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {HEALTH_OPTIONS.map((h) => {
+                      const active = profile.healthConcerns.includes(h);
+                      return (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => toggleHealth(h)}
+                          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                            active
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-card hover:border-primary/40"
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <Label htmlFor="characteristics">추가 특징 (선택)</Label>
+                    <Textarea
+                      id="characteristics"
+                      placeholder="예: 중성화 완료, 알러지 있음, 사료 잘 안 먹음, 활동량 많음..."
+                      value={profile.characteristics}
+                      onChange={(e) =>
+                        setProfile({ ...profile, characteristics: e.target.value })
+                      }
+                      maxLength={500}
+                      rows={4}
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="p-5 border-t border-border flex items-center justify-between gap-3">
@@ -532,7 +577,7 @@ const Index = () => {
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 이전
               </Button>
-              {step < 5 ? (
+              {step < 6 ? (
                 <Button onClick={next} className="rounded-full">
                   다음
                   <ArrowRight className="h-4 w-4 ml-1" />
