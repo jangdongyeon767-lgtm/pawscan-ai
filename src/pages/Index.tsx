@@ -619,17 +619,29 @@ const SwapCard = ({ swap }: { swap: SmartSwap }) => (
     <div className="mt-4 grid gap-2">
       <a
         href="#"
-        className="inline-flex items-center justify-center rounded-full bg-[hsl(var(--brand-chewy))] text-white px-4 py-2.5 text-sm font-medium hover:opacity-90 transition"
+        className="group inline-flex items-center justify-between rounded-xl bg-[hsl(var(--brand-chewy))] text-white pl-4 pr-3 py-3 text-sm font-semibold shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.99] transition"
       >
-        Save $20 on Chewy
-        <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
+        <span className="flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4" />
+          Buy on Chewy · Save $20
+        </span>
+        <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 text-xs font-medium">
+          ${swap.chewy.toFixed(2)}
+          <ExternalLink className="h-3 w-3" />
+        </span>
       </a>
       <a
         href="#"
-        className="inline-flex items-center justify-center rounded-full bg-[hsl(var(--brand-amazon))] text-white px-4 py-2.5 text-sm font-medium hover:opacity-90 transition"
+        className="group inline-flex items-center justify-between rounded-xl bg-[hsl(var(--brand-amazon))] text-white pl-4 pr-3 py-3 text-sm font-semibold shadow-sm hover:shadow-md hover:brightness-110 active:scale-[0.99] transition"
       >
-        Check Price on Amazon
-        <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
+        <span className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4" />
+          Buy on Amazon
+        </span>
+        <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 text-xs font-medium">
+          ${swap.amazon.toFixed(2)}
+          <ExternalLink className="h-3 w-3" />
+        </span>
       </a>
     </div>
   </div>
