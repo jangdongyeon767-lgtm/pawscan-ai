@@ -1416,48 +1416,6 @@ const Index = () => {
       {/* Premium: AI chatbot */}
       <PremiumChatbot isPremium={isPremium} onUpgradeClick={scrollToUpgrade} />
 
-      {/* Subscription CTA when no results */}
-      {!results && (
-        <section id="subscription-cta" className="container pb-16 scroll-mt-24">
-          <div className="mx-auto max-w-3xl rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 md:p-8 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  펫 영양 플랜
-                </div>
-                <h3 className="text-2xl font-semibold mt-3">
-                  {isPremium ? "이미 유료 회원입니다 ✨" : "월 $9.99 — AI 챗봇과 무제한 추천."}
-                </h3>
-                <ul className="mt-3 space-y-1.5 text-sm">
-                  {[
-                    "AI 챗봇 맞춤 추천 무제한",
-                    "하루·월 단위 정확한 급여량 계산",
-                    "리필 알림 · 가격 인하 알림",
-                    "체중·활동량 변화 시 추천 자동 업데이트",
-                  ].map((f) => (
-                    <li key={f} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-primary mt-0.5" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="md:text-right">
-                <Button
-                  size="lg"
-                  onClick={handleSubscribe}
-                  className="h-12 rounded-2xl px-6 shadow-md shadow-primary/30"
-                >
-                  <Bell className="h-4 w-4 mr-1" />
-                  {isPremium ? "이용 중" : "플랜 시작하기 — 월 $9.99"}
-                </Button>
-                <p className="text-[11px] text-muted-foreground mt-2">언제든 해지 가능</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Footer */}
       <footer className="border-t border-border/60 mt-8">
