@@ -193,6 +193,10 @@ const Index = () => {
   } | null>(null);
 
   const startMatching = () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
     setResults(null);
     setStep(1);
   };
