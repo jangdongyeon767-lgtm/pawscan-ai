@@ -240,7 +240,10 @@ const Index = () => {
   useEffect(() => {
     if (user && sessionStorage.getItem("autostart_wizard") === "1") {
       sessionStorage.removeItem("autostart_wizard");
-      start();
+      // Only autostart for brand-new signups (not returning logins)
+      const createdAt = user.created_at ? new Date(user.created_at).getTime() : 0;
+      const isNewSignup = createdAt && Date.now() - createdAt < 60_000;
+      if (isNewSignup) start();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
