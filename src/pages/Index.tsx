@@ -491,17 +491,35 @@ const Index = () => {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
-            <Button
-              size="lg"
-              onClick={() => start()}
-              className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
-            >
-              무료로 시작하기
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              무료 · 60초 소요 · 카드 등록 불필요
-            </p>
+            {user && hasPets ? (
+              <>
+                <Button
+                  size="lg"
+                  onClick={openPets}
+                  className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+                >
+                  <PawPrint className="mr-2 h-5 w-5" />
+                  마이펫 관리하기
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  마이펫에서 우리 아이를 추가하거나 수정할 수 있어요.
+                </p>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="lg"
+                  onClick={() => start()}
+                  className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+                >
+                  무료로 시작하기
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  무료 · 60초 소요 · 카드 등록 불필요
+                </p>
+              </>
+            )}
           </div>
         </div>
 
