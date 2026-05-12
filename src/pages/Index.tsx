@@ -213,6 +213,10 @@ const Index = () => {
   const [unlocked, setUnlocked] = useState(false);
 
   const start = () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
     setResults(null);
     setUnlocked(false);
     setStep(1);
