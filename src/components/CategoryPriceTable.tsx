@@ -62,8 +62,25 @@ const PRODUCTS: Product[] = [
 
 type SortKey = "price-asc" | "price-desc" | "brand";
 
-export function CategoryPriceTable() {
-  const [active, setActive] = useState<Category>("dog-food");
+export function CategoryPriceTable({ petTypes = ["dog", "cat"] }: { petTypes?: ("dog" | "cat")[] } = {}) {
+  const allowed = useMemo(() => {
+    const set = new Set<Category>();
+    if (petTypes.includes("dog")) {
+      set.add("dog-food");
+      set.add("dog-treats");
+    }
+    if (petTypes.includes("cat")) {
+      set.add("cat-food");
+      set.add("cat-treats");
+    }
+    return set;
+  }, [petTypes]);
+  const visibleCategories = CATEGORIES.filter((c) => allowed.has(c.id));
+  const [active, setActive] = useState<Category>(visibleCategories[0]?.id ?? "dog-food");
+  if (!allowed.has(active) && visibleCategories[0]) {
+    // keep active in sync if pet types change
+    setTimeout(() => setActive(visibleCategories[0].id), 0);
+  }
   const [sort, setSort] = useState<SortKey>("price-asc");
   const [brandFilter, setBrandFilter] = useState<string>("all");
   const [ingredientFilter, setIngredientFilter] = useState<string>("all");
