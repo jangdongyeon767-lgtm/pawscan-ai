@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { ProductUrlPreview } from "@/components/ProductUrlPreview";
 
 const AMAZON_TAG = "YOUR_AMAZON_ID";
 const amazonUrl = (q: string) =>
