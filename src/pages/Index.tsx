@@ -672,6 +672,52 @@ const Index = () => {
                   </div>
                 </>
               )}
+
+              {step === 7 && (
+                <>
+                  <h3 className="text-lg font-semibold">이대로 저장할까요?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    입력하신 내용을 확인해 주세요. 저장 후에도 프로필에서 언제든 수정할 수 있어요.
+                  </p>
+                  <div className="rounded-2xl border border-border bg-secondary/30 divide-y divide-border">
+                    {[
+                      { label: "종류", value: profile.petType === "dog" ? "강아지" : "고양이" },
+                      { label: "이름", value: profile.name || "—" },
+                      { label: "품종", value: profile.breed || "—" },
+                      {
+                        label: "나이",
+                        value:
+                          profile.ageYears === "unknown" || !profile.ageYears
+                            ? "모름"
+                            : `${profile.ageYears}년`,
+                      },
+                      {
+                        label: "체중",
+                        value:
+                          profile.weightLbs === "unknown" || !profile.weightLbs
+                            ? "모름"
+                            : `${profile.weightLbs} lbs`,
+                      },
+                      { label: "활동량", value: ACTIVITY_LABEL[profile.activity] },
+                      {
+                        label: "건강 관심사",
+                        value: profile.health.length ? profile.health.join(", ") : "—",
+                      },
+                    ].map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex items-start justify-between gap-3 px-4 py-3 text-sm"
+                      >
+                        <span className="text-muted-foreground">{row.label}</span>
+                        <span className="font-medium text-right">{row.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    저장 후 상단 메뉴의 <span className="font-medium text-foreground">내 펫</span>에서 언제든 수정할 수 있습니다.
+                  </p>
+                </>
+              )}
             </div>
 
             <div className="p-5 border-t border-border flex items-center justify-between gap-3">
@@ -684,15 +730,15 @@ const Index = () => {
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 이전
               </Button>
-              {step < 6 ? (
+              {step < 7 ? (
                 <Button onClick={next} className="rounded-full">
                   다음
                   <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               ) : (
                 <Button onClick={finish} className="rounded-full">
-                  맞춤 결과 보기
-                  <ArrowRight className="h-4 w-4 ml-1" />
+                  <Check className="h-4 w-4 mr-1" />
+                  이대로 저장하기
                 </Button>
               )}
             </div>
