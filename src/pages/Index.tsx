@@ -36,14 +36,14 @@ type PetType = "dog" | "cat";
 type Activity = "low" | "medium" | "high";
 
 const HEALTH_OPTIONS = [
-  "Allergies",
-  "Weight management",
-  "Digestion",
-  "Skin & coat",
-  "Joints",
-  "Dental",
-  "Heart",
-  "Kidney",
+  "알러지",
+  "체중 관리",
+  "소화",
+  "피부·모질",
+  "관절",
+  "치아",
+  "심장",
+  "신장",
 ] as const;
 type Health = (typeof HEALTH_OPTIONS)[number];
 
@@ -66,13 +66,13 @@ type Recommendation = {
   amazonPrice: number;
   chewyPrice: number;
   query: string;
-  cupsPerLb: number; // ~4 cups per lb for dry kibble
+  cupsPerLb: number;
 };
 
 const ACTIVITY_LABEL: Record<Activity, string> = {
-  low: "Low",
-  medium: "Medium",
-  high: "High",
+  low: "낮음",
+  medium: "보통",
+  high: "높음",
 };
 const ACTIVITY_FACTOR: Record<Activity, number> = {
   low: 1.2,
@@ -82,10 +82,11 @@ const ACTIVITY_FACTOR: Record<Activity, number> = {
 
 function pickRecommendation(p: PetProfile): Recommendation {
   const speciesEn = p.petType === "dog" ? "Dog" : "Cat";
-  const wantsWeight = p.health.includes("Weight management");
-  const wantsSkin = p.health.includes("Skin & coat") || p.health.includes("Allergies");
-  const wantsDigestion = p.health.includes("Digestion");
-  const wantsJoints = p.health.includes("Joints");
+  const speciesKo = p.petType === "dog" ? "강아지" : "고양이";
+  const wantsWeight = p.health.includes("체중 관리");
+  const wantsSkin = p.health.includes("피부·모질") || p.health.includes("알러지");
+  const wantsDigestion = p.health.includes("소화");
+  const wantsJoints = p.health.includes("관절");
 
   if (wantsWeight) {
     return {
@@ -93,9 +94,9 @@ function pickRecommendation(p: PetProfile): Recommendation {
       name: `Perfect Weight Adult ${speciesEn} Food`,
       image: "https://m.media-amazon.com/images/I/81Wm6jzC9XL._AC_SL1500_.jpg",
       reasons: [
-        `Formulated for ${ACTIVITY_LABEL[p.activity].toLowerCase()}-activity adult ${speciesEn.toLowerCase()}s`,
-        "Clinically proven weight loss within 10 weeks",
-        "Meets AAFCO nutrient profiles",
+        `${ACTIVITY_LABEL[p.activity]} 활동량 성견·성묘를 위한 저칼로리 포뮬러`,
+        "10주 내 체중 감량 임상 입증",
+        "AAFCO 영양 기준 충족",
       ],
       bagLbs: 25,
       amazonPrice: 64.99,
@@ -110,9 +111,9 @@ function pickRecommendation(p: PetProfile): Recommendation {
       name: `Skin & Coat Salmon Recipe ${speciesEn} Food`,
       image: "https://m.media-amazon.com/images/I/81Cb7B7p+IL._AC_SL1500_.jpg",
       reasons: [
-        "Rich in omega-3 from real salmon",
-        "Grain-free for sensitive stomachs",
-        "Meets AAFCO standards for adult maintenance",
+        "리얼 연어로 풍부한 오메가-3",
+        "민감한 위장을 위한 그레인프리",
+        "AAFCO 성견 유지 기준 충족",
       ],
       bagLbs: 22,
       amazonPrice: 69.99,
@@ -127,9 +128,9 @@ function pickRecommendation(p: PetProfile): Recommendation {
       name: `Sensitive Skin & Stomach ${speciesEn} Food`,
       image: "https://m.media-amazon.com/images/I/81bF1A1Pv6L._AC_SL1500_.jpg",
       reasons: [
-        "Easily digestible oatmeal & salmon",
-        "Live probiotics for digestive health",
-        "Meets AAFCO standards",
+        "소화가 쉬운 오트밀과 연어",
+        "장 건강을 위한 살아있는 프로바이오틱스",
+        "AAFCO 기준 충족",
       ],
       bagLbs: 30,
       amazonPrice: 74.99,
@@ -144,9 +145,9 @@ function pickRecommendation(p: PetProfile): Recommendation {
       name: `Mobility Support ${speciesEn} Formula`,
       image: "https://m.media-amazon.com/images/I/81Z6CqQ4o0L._AC_SL1500_.jpg",
       reasons: [
-        "Glucosamine & EPA for joint support",
-        `Tailored for ${ACTIVITY_LABEL[p.activity].toLowerCase()}-activity ${speciesEn.toLowerCase()}s`,
-        "Veterinary-formulated, AAFCO compliant",
+        "관절 지원을 위한 글루코사민 & EPA",
+        `${ACTIVITY_LABEL[p.activity]} 활동량 ${speciesKo}에 맞춤`,
+        "수의사 처방, AAFCO 준수",
       ],
       bagLbs: 24,
       amazonPrice: 79.99,
@@ -160,9 +161,9 @@ function pickRecommendation(p: PetProfile): Recommendation {
     name: `Life Protection Adult ${speciesEn} Food`,
     image: "https://m.media-amazon.com/images/I/81e+JzKZA8L._AC_SL1500_.jpg",
     reasons: [
-      `Balanced nutrition for ${ACTIVITY_LABEL[p.activity].toLowerCase()}-activity adult ${speciesEn.toLowerCase()}s`,
-      "Real meat first, no by-product meals",
-      "Meets AAFCO nutrient profiles",
+      `${ACTIVITY_LABEL[p.activity]} 활동량 성견·성묘를 위한 균형 잡힌 영양`,
+      "리얼 미트 우선, 부산물 미트밀 무첨가",
+      "AAFCO 영양 기준 충족",
     ],
     bagLbs: 30,
     amazonPrice: 59.99,
@@ -193,7 +194,7 @@ function feedingPlan(p: PetProfile, r: Recommendation) {
 const Index = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [step, setStep] = useState(0); // 0 closed, 1-6 wizard, 7 email gate
+  const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<PetProfile>({
     name: "",
     petType: "dog",
@@ -245,7 +246,7 @@ const Index = () => {
         weight: profile.weightLbs || null,
         goal: profile.health[0] || "general",
         health_concerns: profile.health,
-        characteristics: `Activity: ${ACTIVITY_LABEL[profile.activity]}`,
+        characteristics: `활동량: ${ACTIVITY_LABEL[profile.activity]}`,
       });
     }
   };
@@ -253,25 +254,26 @@ const Index = () => {
   const submitEmail = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.includes("@")) {
-      toast({ title: "Please enter a valid email", variant: "destructive" });
+      toast({ title: "올바른 이메일을 입력해 주세요", variant: "destructive" });
       return;
     }
     toast({
-      title: "You're in!",
-      description: "We'll send refill reminders & price drop alerts.",
+      title: "등록되었습니다!",
+      description: "리필 알림과 가격 인하 알림을 보내드릴게요.",
     });
     setUnlocked(true);
   };
 
   const handleSubscribe = () => {
     toast({
-      title: "Pet Nutrition Plan — $9.99/month",
-      description: "Subscription checkout coming soon.",
+      title: "펫 영양 플랜 — 월 $9.99",
+      description: "구독 결제 기능이 곧 제공됩니다.",
     });
   };
 
-  const petName = profile.name.trim() || (profile.petType === "dog" ? "your dog" : "your cat");
-  const petLabel = profile.petType === "dog" ? "Dog" : "Cat";
+  const petName =
+    profile.name.trim() || (profile.petType === "dog" ? "우리 강아지" : "우리 고양이");
+  const petLabel = profile.petType === "dog" ? "강아지" : "고양이";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -296,7 +298,7 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground mr-2">
               <Award className="h-4 w-4 text-primary" />
-              AAFCO-aligned
+              AAFCO 기준 적용
             </div>
             {user ? (
               <>
@@ -305,7 +307,7 @@ const Index = () => {
                 </span>
                 <Button variant="ghost" size="sm" onClick={signOut} className="rounded-full">
                   <LogOut className="h-4 w-4 mr-1" />
-                  Sign out
+                  로그아웃
                 </Button>
               </>
             ) : (
@@ -316,14 +318,14 @@ const Index = () => {
                   onClick={() => navigate("/auth")}
                   className="rounded-full"
                 >
-                  Sign in
+                  로그인
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => navigate("/auth")}
                   className="rounded-full"
                 >
-                  Get started
+                  시작하기
                 </Button>
               </>
             )}
@@ -336,16 +338,15 @@ const Index = () => {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground mb-6 shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Personalized Pet Nutrition &amp; Feeding Management
+            맞춤형 펫 영양 &amp; 급여 관리 서비스
           </div>
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-foreground">
-            Find the Best Food for Your Dog
+            우리 아이에게 딱 맞는 사료,
             <br className="hidden sm:block" />
-            <span className="text-primary"> in 60 Seconds.</span>
+            <span className="text-primary"> 60초 만에 찾기.</span>
           </h1>
           <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            A personalized nutrition plan based on your pet's breed, weight, and health
-            needs.
+            견종·묘종, 체중, 건강 상태에 맞춘 개인 맞춤 영양 플랜을 제공합니다.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
@@ -354,11 +355,11 @@ const Index = () => {
               onClick={start}
               className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
             >
-              Start Free
+              무료로 시작하기
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="text-xs text-muted-foreground">
-              Free · 60 seconds · No credit card required
+              무료 · 60초 소요 · 카드 등록 불필요
             </p>
           </div>
         </div>
@@ -368,18 +369,18 @@ const Index = () => {
           {[
             {
               icon: Award,
-              label: "AAFCO-aligned",
-              sub: "Recommendations meet AAFCO nutrient profiles",
+              label: "AAFCO 기준",
+              sub: "AAFCO 영양 기준에 맞춘 추천",
             },
             {
               icon: ShieldCheck,
-              label: "Curated brands",
-              sub: "Only top-rated brands from Amazon & Chewy",
+              label: "엄선된 브랜드",
+              sub: "Amazon·Chewy 상위 브랜드만 큐레이션",
             },
             {
               icon: Lock,
-              label: "Privacy first",
-              sub: "Your pet profile is yours — encrypted and never sold",
+              label: "프라이버시 우선",
+              sub: "프로필은 본인 계정에서만 안전하게 관리",
             },
           ].map((f) => (
             <div
@@ -404,13 +405,13 @@ const Index = () => {
           <div className="w-full max-w-lg rounded-3xl bg-card overflow-hidden shadow-2xl border border-border">
             <div className="p-5 border-b border-border flex items-center justify-between">
               <div>
-                <div className="text-xs text-muted-foreground">Step {step} of 6</div>
-                <div className="font-semibold mt-0.5">Build your pet profile</div>
+                <div className="text-xs text-muted-foreground">{step} / 6 단계</div>
+                <div className="font-semibold mt-0.5">반려동물 프로필 만들기</div>
               </div>
               <button
                 onClick={close}
                 className="text-muted-foreground hover:text-foreground"
-                aria-label="Close"
+                aria-label="닫기"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -426,11 +427,11 @@ const Index = () => {
             <div className="p-6 space-y-5 min-h-[300px]">
               {step === 1 && (
                 <>
-                  <h3 className="text-lg font-semibold">Dog or cat?</h3>
+                  <h3 className="text-lg font-semibold">강아지인가요, 고양이인가요?</h3>
                   <div className="grid grid-cols-2 gap-3">
                     {([
-                      { v: "dog", icon: Dog, label: "Dog" },
-                      { v: "cat", icon: Cat, label: "Cat" },
+                      { v: "dog", icon: Dog, label: "강아지" },
+                      { v: "cat", icon: Cat, label: "고양이" },
                     ] as const).map((opt) => (
                       <button
                         key={opt.v}
@@ -447,10 +448,10 @@ const Index = () => {
                     ))}
                   </div>
                   <div className="space-y-2 pt-2">
-                    <Label htmlFor="petName">Name (optional)</Label>
+                    <Label htmlFor="petName">이름 (선택)</Label>
                     <Input
                       id="petName"
-                      placeholder="e.g. Bailey"
+                      placeholder="예: 베일리"
                       value={profile.name}
                       onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                       maxLength={40}
@@ -461,18 +462,16 @@ const Index = () => {
 
               {step === 2 && (
                 <>
-                  <h3 className="text-lg font-semibold">Breed</h3>
+                  <h3 className="text-lg font-semibold">견종 / 묘종</h3>
                   <p className="text-sm text-muted-foreground">
-                    We use this to size portions and toy durability.
+                    급여량과 장난감 내구성 추천에 활용됩니다.
                   </p>
                   <div className="space-y-2">
-                    <Label htmlFor="breed">Breed</Label>
+                    <Label htmlFor="breed">품종</Label>
                     <Input
                       id="breed"
                       placeholder={
-                        profile.petType === "dog"
-                          ? "e.g. Golden Retriever"
-                          : "e.g. Maine Coon"
+                        profile.petType === "dog" ? "예: 골든 리트리버" : "예: 메인쿤"
                       }
                       value={profile.breed}
                       onChange={(e) => setProfile({ ...profile, breed: e.target.value })}
@@ -484,17 +483,17 @@ const Index = () => {
 
               {step === 3 && (
                 <>
-                  <h3 className="text-lg font-semibold">Age</h3>
-                  <p className="text-sm text-muted-foreground">In years.</p>
+                  <h3 className="text-lg font-semibold">나이</h3>
+                  <p className="text-sm text-muted-foreground">연 단위로 입력해 주세요.</p>
                   <div className="space-y-2">
-                    <Label htmlFor="age">Age (years)</Label>
+                    <Label htmlFor="age">나이 (년)</Label>
                     <Input
                       id="age"
                       type="number"
                       inputMode="decimal"
                       min={0}
                       max={30}
-                      placeholder="e.g. 4"
+                      placeholder="예: 4"
                       value={profile.ageYears}
                       onChange={(e) => setProfile({ ...profile, ageYears: e.target.value })}
                     />
@@ -504,19 +503,19 @@ const Index = () => {
 
               {step === 4 && (
                 <>
-                  <h3 className="text-lg font-semibold">Weight</h3>
+                  <h3 className="text-lg font-semibold">체중</h3>
                   <p className="text-sm text-muted-foreground">
-                    Used to calculate daily calories.
+                    하루 권장 칼로리 계산에 사용됩니다.
                   </p>
                   <div className="space-y-2">
-                    <Label htmlFor="weight">Weight (lbs)</Label>
+                    <Label htmlFor="weight">체중 (lbs)</Label>
                     <Input
                       id="weight"
                       type="number"
                       inputMode="decimal"
                       min={1}
                       max={250}
-                      placeholder="e.g. 45"
+                      placeholder="예: 45"
                       value={profile.weightLbs}
                       onChange={(e) =>
                         setProfile({ ...profile, weightLbs: e.target.value })
@@ -528,7 +527,7 @@ const Index = () => {
 
               {step === 5 && (
                 <>
-                  <h3 className="text-lg font-semibold">Activity level</h3>
+                  <h3 className="text-lg font-semibold">활동량</h3>
                   <div className="space-y-2">
                     {(["low", "medium", "high"] as Activity[]).map((a) => (
                       <button
@@ -552,9 +551,9 @@ const Index = () => {
 
               {step === 6 && (
                 <>
-                  <h3 className="text-lg font-semibold">Health concerns</h3>
+                  <h3 className="text-lg font-semibold">건강 관심사</h3>
                   <p className="text-sm text-muted-foreground">
-                    Select any that apply (optional).
+                    해당하는 항목을 모두 선택해 주세요 (선택).
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {HEALTH_OPTIONS.map((h) => {
@@ -587,16 +586,16 @@ const Index = () => {
                 className="rounded-full"
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
+                이전
               </Button>
               {step < 6 ? (
                 <Button onClick={next} className="rounded-full">
-                  Continue
+                  다음
                   <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               ) : (
                 <Button onClick={finish} className="rounded-full">
-                  See my match
+                  맞춤 결과 보기
                   <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               )}
@@ -612,10 +611,10 @@ const Index = () => {
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-medium mb-3">
                 <Sparkles className="h-3.5 w-3.5" />
-                Best match for {petName}
+                {petName}을(를) 위한 베스트 매치
               </div>
               <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
-                One pick. Backed by your pet's profile.
+                딱 한 가지 추천. 우리 아이 프로필 기반.
               </h2>
             </div>
 
@@ -642,7 +641,7 @@ const Index = () => {
                     <Star className="h-4 w-4 fill-warning text-warning" />
                     <Star className="h-4 w-4 fill-warning text-warning" />
                     <Star className="h-4 w-4 fill-warning text-warning" />
-                    <span className="text-muted-foreground ml-1">4.8 · 12k+ reviews</span>
+                    <span className="text-muted-foreground ml-1">4.8 · 12,000+ 리뷰</span>
                   </div>
                   <ul className="mt-4 space-y-2">
                     {results.rec.reasons.map((r) => (
@@ -661,19 +660,18 @@ const Index = () => {
               <div className="rounded-2xl border border-warning/30 bg-warning/5 p-4 flex items-start gap-3">
                 <TrendingDown className="h-5 w-5 text-warning shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <div className="font-medium">You may be overpaying ~$15/month</div>
+                  <div className="font-medium">매월 약 $15을 더 내고 계실 수 있어요</div>
                   <div className="text-muted-foreground">
-                    Compared to typical store-brand pricing for {petLabel.toLowerCase()}s
-                    your size.
+                    동일 체급 {petLabel} 일반 매장 가격과 비교한 결과입니다.
                   </div>
                 </div>
               </div>
               <div className="rounded-2xl border border-danger/30 bg-danger/5 p-4 flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-danger shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <div className="font-medium">Current diet may increase weight risk</div>
+                  <div className="font-medium">현재 식단은 비만 위험을 높일 수 있어요</div>
                   <div className="text-muted-foreground">
-                    Switching to a tailored formula reduces this risk significantly.
+                    맞춤 포뮬러로 변경 시 위험을 크게 낮출 수 있습니다.
                   </div>
                 </div>
               </div>
@@ -682,27 +680,27 @@ const Index = () => {
             {/* Feeding plan (locked) */}
             <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-7 shadow-sm relative overflow-hidden">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Your feeding plan</h3>
+                <h3 className="text-lg font-semibold">맞춤 급여 플랜</h3>
                 <span className="text-xs text-muted-foreground">
-                  Calculated for {profile.weightLbs || "—"} lbs · {ACTIVITY_LABEL[profile.activity]}
+                  {profile.weightLbs || "—"} lbs · 활동량 {ACTIVITY_LABEL[profile.activity]}
                 </span>
               </div>
 
               <div className="grid sm:grid-cols-3 gap-4 mt-4">
                 <div className="rounded-xl border border-border bg-background p-4">
-                  <div className="text-xs text-muted-foreground">Daily feeding</div>
+                  <div className="text-xs text-muted-foreground">하루 급여량</div>
                   <div className="text-2xl font-semibold mt-1">
-                    {results.plan.cupsPerDay} cups
+                    {results.plan.cupsPerDay} 컵
                   </div>
                 </div>
                 <div className="rounded-xl border border-border bg-background p-4">
-                  <div className="text-xs text-muted-foreground">Monthly food cost</div>
+                  <div className="text-xs text-muted-foreground">월 사료 비용</div>
                   <div className="text-2xl font-semibold mt-1">
                     ~${results.plan.monthlyCost}
                   </div>
                 </div>
                 <div className="rounded-xl border border-border bg-background p-4 relative">
-                  <div className="text-xs text-muted-foreground">Daily calories</div>
+                  <div className="text-xs text-muted-foreground">하루 칼로리</div>
                   <div
                     className={`text-2xl font-semibold mt-1 ${unlocked ? "" : "blur-sm select-none"}`}
                   >
@@ -711,23 +709,22 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Locked detail rows */}
               <div className={`mt-5 space-y-2 ${unlocked ? "" : "blur-sm select-none"}`}>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Morning serving</span>
-                  <span>{(results.plan.cupsPerDay / 2).toFixed(2)} cups</span>
+                  <span className="text-muted-foreground">아침 급여량</span>
+                  <span>{(results.plan.cupsPerDay / 2).toFixed(2)} 컵</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Evening serving</span>
-                  <span>{(results.plan.cupsPerDay / 2).toFixed(2)} cups</span>
+                  <span className="text-muted-foreground">저녁 급여량</span>
+                  <span>{(results.plan.cupsPerDay / 2).toFixed(2)} 컵</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Treat budget (10%)</span>
-                  <span>~{Math.round(results.plan.der * 0.1)} kcal/day</span>
+                  <span className="text-muted-foreground">간식 한도 (10%)</span>
+                  <span>~{Math.round(results.plan.der * 0.1)} kcal/일</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Refill cadence</span>
-                  <span>Every ~{Math.max(1, Math.round(30 / Math.max(1, results.plan.monthlyCost / 60)))} weeks</span>
+                  <span className="text-muted-foreground">리필 주기</span>
+                  <span>약 {Math.max(1, Math.round(30 / Math.max(1, results.plan.monthlyCost / 60)))}주마다</span>
                 </div>
               </div>
 
@@ -736,10 +733,9 @@ const Index = () => {
                   <div className="flex items-start gap-3">
                     <Lock className="h-5 w-5 text-primary mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium">Unlock the full feeding plan</div>
+                      <div className="font-medium">급여 플랜 전체 보기</div>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Save your pet profile and get refill reminders, price drops, and
-                        nutrition updates.
+                        프로필을 저장하고 리필 알림, 가격 인하, 영양 업데이트를 받아보세요.
                       </p>
                       <form
                         onSubmit={submitEmail}
@@ -755,11 +751,11 @@ const Index = () => {
                         />
                         <Button type="submit" className="rounded-xl">
                           <Mail className="h-4 w-4 mr-1" />
-                          Save & unlock
+                          저장하고 잠금 해제
                         </Button>
                       </form>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        No spam. Unsubscribe anytime.
+                        스팸 없음. 언제든 구독 취소 가능합니다.
                       </p>
                     </div>
                   </div>
@@ -770,9 +766,9 @@ const Index = () => {
             {/* Price comparison */}
             <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-7 shadow-sm">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Price comparison</h3>
+                <h3 className="text-lg font-semibold">가격 비교</h3>
                 <span className="text-xs text-muted-foreground">
-                  {results.rec.bagLbs} lb bag
+                  {results.rec.bagLbs} lb 사이즈
                 </span>
               </div>
 
@@ -795,7 +791,6 @@ const Index = () => {
                       bg: "hsl(var(--brand-chewy))",
                     },
                   ];
-                  // Order by commission priority: Amazon first
                   return stores.map((s) => (
                     <div
                       key={s.name}
@@ -808,7 +803,7 @@ const Index = () => {
                           <span className="font-semibold">{s.name}</span>
                           {s.best && (
                             <span className="text-[10px] uppercase tracking-wider rounded-full px-2 py-0.5 bg-success text-white">
-                              Best value
+                              최저가
                             </span>
                           )}
                         </div>
@@ -821,7 +816,7 @@ const Index = () => {
                           className="rounded-xl text-white"
                           style={{ backgroundColor: s.bg }}
                         >
-                          Buy on {s.name}
+                          {s.name}에서 구매
                           <ArrowRight className="h-4 w-4 ml-1" />
                         </Button>
                       </a>
@@ -837,17 +832,17 @@ const Index = () => {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
                     <Sparkles className="h-3.5 w-3.5" />
-                    Pet Nutrition Plan
+                    펫 영양 플랜
                   </div>
                   <h3 className="text-2xl font-semibold mt-3">
-                    $9.99/month — never overfeed, never run out.
+                    월 $9.99 — 과식·재고 부족 걱정 없이.
                   </h3>
                   <ul className="mt-3 space-y-1.5 text-sm">
                     {[
-                      "Full daily & monthly feeding calculations",
-                      "Auto refill reminders timed to your bag size",
-                      "Health risk alerts as your pet ages",
-                      "Updated picks when weight or activity changes",
+                      "하루·월 단위 정확한 급여량 계산",
+                      "사료 사이즈에 맞춘 자동 리필 알림",
+                      "나이 변화에 따른 건강 위험 알림",
+                      "체중·활동량 변화 시 추천 자동 업데이트",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary mt-0.5" />
@@ -863,10 +858,10 @@ const Index = () => {
                     className="h-12 rounded-2xl px-6 shadow-md shadow-primary/30"
                   >
                     <Bell className="h-4 w-4 mr-1" />
-                    Start my plan — $9.99/mo
+                    플랜 시작하기 — 월 $9.99
                   </Button>
                   <p className="text-[11px] text-muted-foreground mt-2">
-                    Cancel anytime.
+                    언제든 해지 가능
                   </p>
                 </div>
               </div>
@@ -879,12 +874,11 @@ const Index = () => {
       <footer className="border-t border-border/60 mt-8">
         <div className="container py-8 text-xs text-muted-foreground space-y-2 text-center">
           <p>
-            As an Amazon Associate, My Cat &amp; Dog Market earns from qualifying
-            purchases. We may also earn commissions from Chewy and other partners.
+            My Cat &amp; Dog Market은 Amazon Associates 프로그램 참여자로서 적격 구매를
+            통해 수수료를 받습니다. Chewy 등 파트너사로부터도 수수료를 받을 수 있습니다.
           </p>
           <p>
-            Personalized nutrition guidance is informational and not a substitute for
-            veterinary advice.
+            맞춤 영양 가이드는 정보 제공용이며 수의학적 진단을 대체하지 않습니다.
           </p>
           <p>© {new Date().getFullYear()} My Cat &amp; Dog Market</p>
         </div>
