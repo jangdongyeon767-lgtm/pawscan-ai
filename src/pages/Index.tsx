@@ -736,6 +736,30 @@ const Index = () => {
               </div>
             </div>
 
+            {hasBoth && completedSpecies.length < 2 && (() => {
+              const other: PetType =
+                results.profile.petType === "dog" ? "cat" : "dog";
+              return (
+                <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-4 flex items-center justify-between gap-3">
+                  <div className="text-sm">
+                    <div className="font-medium">
+                      {other === "dog" ? "🐶 강아지" : "🐱 고양이"} 프로필도 추가해 보세요
+                    </div>
+                    <div className="text-muted-foreground">
+                      두 아이 모두 맞춤 추천을 받을 수 있어요.
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => start(other, true)}
+                    className="rounded-full shrink-0"
+                  >
+                    {other === "dog" ? "강아지 추가" : "고양이 추가"}
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              );
+            })()}
+
             {/* Feeding plan (locked) */}
             <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-7 shadow-sm relative overflow-hidden">
               <div className="flex items-center justify-between">
