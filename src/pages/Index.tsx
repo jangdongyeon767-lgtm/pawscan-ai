@@ -360,10 +360,46 @@ const Index = () => {
     setUnlocked(true);
   };
 
-  const handleSubscribe = () => {
+  const [isPremium, setIsPremium] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsPremium(false);
+      return;
+    }
+    supabase
+      .from("profiles")
+      .select("is_premium")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => setIsPremium(!!data?.is_premium));
+  }, [user]);
+
+  const scrollToUpgrade = () => {
+    document.getElementById("subscription-cta")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  const handleSubscribe = async () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    if (isPremium) {
+      toast({ title: "이미 유료 회원입니다", description: "AI 챗봇을 자유롭게 이용해 보세요." });
+      return;
+    }
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_premium: true })
+      .eq("id", user.id);
+    if (error) {
+      toast({ title: "업그레이드 실패", description: error.message, variant: "destructive" });
+      return;
+    }
+    setIsPremium(true);
     toast({
-      title: "펫 영양 플랜 — 월 $9.99",
-      description: "구독 결제 기능이 곧 제공됩니다.",
+      title: "유료 회원이 되셨어요! 🎉",
+      description: "이제 AI 맞춤 추천 챗봇을 이용할 수 있어요.",
     });
   };
 
