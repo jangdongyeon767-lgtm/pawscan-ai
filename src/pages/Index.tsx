@@ -802,7 +802,7 @@ const Index = () => {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">맞춤 급여 플랜</h3>
                 <span className="text-xs text-muted-foreground">
-                  {profile.weightLbs || "—"} lbs · 활동량 {ACTIVITY_LABEL[profile.activity]}
+                  {profile.weightLbs && profile.weightLbs !== "unknown" ? `${profile.weightLbs} lbs` : "체중 모름"} · 활동량 {ACTIVITY_LABEL[profile.activity]}
                 </span>
               </div>
 
