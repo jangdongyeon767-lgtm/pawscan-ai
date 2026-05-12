@@ -130,8 +130,8 @@ export function CategoryPriceTable({ petTypes = ["dog", "cat"] }: { petTypes?: (
         </div>
 
         {/* Category tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
-          {CATEGORIES.map((c) => (
+        <div className={`grid grid-cols-2 ${visibleCategories.length >= 4 ? "sm:grid-cols-4" : `sm:grid-cols-${visibleCategories.length}`} gap-2 mb-5`}>
+          {visibleCategories.map((c) => (
             <button
               key={c.id}
               onClick={() => {
