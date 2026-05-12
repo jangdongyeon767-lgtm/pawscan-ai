@@ -1408,7 +1408,13 @@ const Index = () => {
       <ProductUrlPreview />
 
       {/* Free: category price comparison */}
-      <CategoryPriceTable />
+      <CategoryPriceTable
+        petTypes={
+          pets.length > 0
+            ? (Array.from(new Set(pets.map((p) => p.pet_type))) as ("dog" | "cat")[])
+            : ["dog", "cat"]
+        }
+      />
 
       {/* Premium: AI chatbot */}
       <PremiumChatbot isPremium={isPremium} onUpgradeClick={scrollToUpgrade} />
