@@ -344,6 +344,7 @@ const Index = () => {
         health_concerns: profile.health,
         characteristics: `활동량: ${ACTIVITY_LABEL[profile.activity]}`,
       });
+      await loadPets();
     }
   };
 
