@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ShieldCheck,
@@ -211,16 +211,39 @@ const Index = () => {
     plan: ReturnType<typeof feedingPlan>;
   } | null>(null);
   const [unlocked, setUnlocked] = useState(false);
+  const [hasBoth, setHasBoth] = useState(false);
+  const [completedSpecies, setCompletedSpecies] = useState<PetType[]>([]);
 
-  const start = () => {
+  const start = (petType?: PetType, keepBoth = false) => {
     if (!user) {
       navigate("/auth");
       return;
     }
     setResults(null);
     setUnlocked(false);
+    if (!keepBoth) {
+      setHasBoth(false);
+      setCompletedSpecies([]);
+    }
+    setProfile({
+      name: "",
+      petType: petType ?? "dog",
+      breed: "",
+      ageYears: "",
+      weightLbs: "",
+      activity: "medium",
+      health: [],
+    });
     setStep(1);
   };
+
+  useEffect(() => {
+    if (user && sessionStorage.getItem("autostart_wizard") === "1") {
+      sessionStorage.removeItem("autostart_wizard");
+      start();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   const close = () => setStep(0);
   const next = () => setStep((s) => s + 1);
   const back = () => setStep((s) => Math.max(s - 1, 1));
@@ -235,6 +258,9 @@ const Index = () => {
     const plan = feedingPlan(profile, rec);
     setResults({ profile, rec, plan });
     setStep(0);
+    setCompletedSpecies((prev) =>
+      prev.includes(profile.petType) ? prev : [...prev, profile.petType],
+    );
     setEmail(user?.email ?? "");
     setTimeout(
       () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }),
@@ -356,7 +382,7 @@ const Index = () => {
           <div className="mt-10 flex flex-col items-center gap-3">
             <Button
               size="lg"
-              onClick={start}
+              onClick={() => start()}
               className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
             >
               무료로 시작하기
@@ -432,25 +458,54 @@ const Index = () => {
               {step === 1 && (
                 <>
                   <h3 className="text-lg font-semibold">강아지인가요, 고양이인가요?</h3>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     {([
-                      { v: "dog", icon: Dog, label: "강아지" },
-                      { v: "cat", icon: Cat, label: "고양이" },
-                    ] as const).map((opt) => (
-                      <button
-                        key={opt.v}
-                        onClick={() => setProfile({ ...profile, petType: opt.v })}
-                        className={`rounded-2xl border p-5 flex flex-col items-center gap-2 transition-all ${
-                          profile.petType === opt.v
-                            ? "border-primary bg-primary/5 ring-2 ring-primary/30"
-                            : "border-border hover:border-primary/40"
-                        }`}
-                      >
-                        <opt.icon className="h-8 w-8 text-primary" />
-                        <div className="font-medium">{opt.label}</div>
-                      </button>
-                    ))}
+                      { v: "dog", icon: Dog, label: "강아지", both: false },
+                      { v: "cat", icon: Cat, label: "고양이", both: false },
+                      { v: "dog", icon: PawPrint, label: "둘 다", both: true },
+                    ] as const).map((opt, i) => {
+                      const selected =
+                        opt.both ? hasBoth : !hasBoth && profile.petType === opt.v;
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            setHasBoth(opt.both);
+                            setProfile({ ...profile, petType: opt.v });
+                          }}
+                          className={`rounded-2xl border p-5 flex flex-col items-center gap-2 transition-all ${
+                            selected
+                              ? "border-primary bg-primary/5 ring-2 ring-primary/30"
+                              : "border-border hover:border-primary/40"
+                          }`}
+                        >
+                          <opt.icon className="h-8 w-8 text-primary" />
+                          <div className="font-medium">{opt.label}</div>
+                        </button>
+                      );
+                    })}
                   </div>
+                  {hasBoth && (
+                    <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
+                      둘 다 키우시는군요! 먼저 한 아이의 프로필을 만들고, 완료 후 다른 아이도
+                      추가할 수 있어요. 어느 아이부터 시작할까요?
+                      <div className="mt-2 flex gap-2">
+                        {(["dog", "cat"] as PetType[]).map((pt) => (
+                          <button
+                            key={pt}
+                            onClick={() => setProfile({ ...profile, petType: pt })}
+                            className={`rounded-full border px-3 py-1 ${
+                              profile.petType === pt
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-border"
+                            }`}
+                          >
+                            {pt === "dog" ? "강아지부터" : "고양이부터"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-2 pt-2">
                     <Label htmlFor="petName">이름 (선택)</Label>
                     <Input
@@ -680,6 +735,30 @@ const Index = () => {
                 </div>
               </div>
             </div>
+
+            {hasBoth && completedSpecies.length < 2 && (() => {
+              const other: PetType =
+                results.profile.petType === "dog" ? "cat" : "dog";
+              return (
+                <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-4 flex items-center justify-between gap-3">
+                  <div className="text-sm">
+                    <div className="font-medium">
+                      {other === "dog" ? "🐶 강아지" : "🐱 고양이"} 프로필도 추가해 보세요
+                    </div>
+                    <div className="text-muted-foreground">
+                      두 아이 모두 맞춤 추천을 받을 수 있어요.
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => start(other, true)}
+                    className="rounded-full shrink-0"
+                  >
+                    {other === "dog" ? "강아지 추가" : "고양이 추가"}
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              );
+            })()}
 
             {/* Feeding plan (locked) */}
             <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-7 shadow-sm relative overflow-hidden">
