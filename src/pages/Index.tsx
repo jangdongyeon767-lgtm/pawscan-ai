@@ -211,16 +211,39 @@ const Index = () => {
     plan: ReturnType<typeof feedingPlan>;
   } | null>(null);
   const [unlocked, setUnlocked] = useState(false);
+  const [hasBoth, setHasBoth] = useState(false);
+  const [completedSpecies, setCompletedSpecies] = useState<PetType[]>([]);
 
-  const start = () => {
+  const start = (petType?: PetType, keepBoth = false) => {
     if (!user) {
       navigate("/auth");
       return;
     }
     setResults(null);
     setUnlocked(false);
+    if (!keepBoth) {
+      setHasBoth(false);
+      setCompletedSpecies([]);
+    }
+    setProfile({
+      name: "",
+      petType: petType ?? "dog",
+      breed: "",
+      ageYears: "",
+      weightLbs: "",
+      activity: "medium",
+      health: [],
+    });
     setStep(1);
   };
+
+  useEffect(() => {
+    if (user && sessionStorage.getItem("autostart_wizard") === "1") {
+      sessionStorage.removeItem("autostart_wizard");
+      start();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   const close = () => setStep(0);
   const next = () => setStep((s) => s + 1);
   const back = () => setStep((s) => Math.max(s - 1, 1));
