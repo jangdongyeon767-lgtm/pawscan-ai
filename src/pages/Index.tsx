@@ -379,7 +379,7 @@ const Index = () => {
           <div className="mt-10 flex flex-col items-center gap-3">
             <Button
               size="lg"
-              onClick={start}
+              onClick={() => start()}
               className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
             >
               무료로 시작하기
