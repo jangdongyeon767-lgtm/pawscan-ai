@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PawPrint } from "lucide-react";
+import { ArrowLeft, PawPrint } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Auth() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
+
+  useEffect(() => {
+    if (user) navigate("/", { replace: true });
+  }, [user, navigate]);
 
   const oauth = async (provider: "google" | "apple") => {
     setOauthLoading(provider);
@@ -42,62 +38,39 @@ export default function Auth() {
     }
   };
 
-
-  useEffect(() => {
-    if (user) navigate("/", { replace: true });
-  }, [user, navigate]);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: { display_name: displayName || email.split("@")[0] },
-          },
-        });
-        if (error) throw error;
-        toast({ title: "회원가입 완료", description: "환영합니다!" });
-        navigate("/");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast({ title: "로그인 성공" });
-        navigate("/");
-      }
-    } catch (err: any) {
-      toast({
-        title: "오류",
-        description: err.message ?? "다시 시도해 주세요.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border/60">
-        <div className="container h-16 flex items-center">
+        <div className="container h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
               <PawPrint className="h-5 w-5 text-primary" />
             </div>
             <span className="font-semibold tracking-tight">My Cat &amp; Dog Market</span>
           </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            className="rounded-full"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            이전
+          </Button>
         </div>
       </header>
 
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-sm">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {mode === "signup" ? "회원가입" : "로그인"}
-          </h1>
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            이전으로
+          </button>
+
+          <h1 className="text-2xl font-semibold tracking-tight">로그인 / 회원가입</h1>
           <p className="text-sm text-muted-foreground mt-1">
             반려동물 프로필을 저장하고 맞춤 추천을 받아보세요.
           </p>
@@ -131,67 +104,9 @@ export default function Auth() {
             </Button>
           </div>
 
-          <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="h-px flex-1 bg-border" />
-            또는 이메일로
-            <div className="h-px flex-1 bg-border" />
-          </div>
-
-          <form onSubmit={submit} className="space-y-4">
-            {mode === "signup" && (
-              <div className="space-y-2">
-                <Label htmlFor="name">이름 (선택)</Label>
-                <Input
-                  id="name"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  maxLength={60}
-                />
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="email">이메일</Label>
-              <Input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">비밀번호</Label>
-              <Input
-                id="password"
-                type="password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <Button type="submit" className="w-full rounded-xl h-11" disabled={loading}>
-              {loading ? "처리 중..." : mode === "signup" ? "회원가입" : "로그인"}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            {mode === "signup" ? (
-              <>
-                이미 계정이 있으신가요?{" "}
-                <button onClick={() => setMode("signin")} className="text-primary font-medium">
-                  로그인
-                </button>
-              </>
-            ) : (
-              <>
-                계정이 없으신가요?{" "}
-                <button onClick={() => setMode("signup")} className="text-primary font-medium">
-                  회원가입
-                </button>
-              </>
-            )}
-          </div>
+          <p className="mt-6 text-[11px] text-muted-foreground text-center">
+            계속하면 서비스 약관 및 개인정보 처리방침에 동의하는 것으로 간주됩니다.
+          </p>
         </div>
       </main>
     </div>
