@@ -18,6 +18,7 @@ export default function Auth() {
   const oauth = async (provider: "google" | "apple") => {
     setOauthLoading(provider);
     try {
+      sessionStorage.setItem("autostart_wizard", "1");
       const result = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin,
       });
