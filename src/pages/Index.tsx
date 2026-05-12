@@ -365,6 +365,7 @@ const Index = () => {
   useEffect(() => {
     if (!user) {
       setIsPremium(false);
+      setPets([]);
       return;
     }
     supabase
@@ -373,7 +374,11 @@ const Index = () => {
       .eq("id", user.id)
       .maybeSingle()
       .then(({ data }) => setIsPremium(!!data?.is_premium));
+    loadPets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  const hasPets = pets.length > 0;
 
   const scrollToUpgrade = () => {
     document.getElementById("subscription-cta")?.scrollIntoView({ behavior: "smooth", block: "center" });
