@@ -883,69 +883,124 @@ const Index = () => {
               )}
             </div>
 
-            {/* Price comparison */}
-            <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-7 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">가격 비교</h3>
-                <span className="text-xs text-muted-foreground">
-                  {results.rec.bagLbs} lb 사이즈
-                </span>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-3 mt-4">
-                {(() => {
-                  const amazonBest = results.rec.amazonPrice <= results.rec.chewyPrice;
-                  const stores = [
-                    {
-                      name: "Amazon",
-                      price: results.rec.amazonPrice,
-                      url: amazonUrl(results.rec.query),
-                      best: amazonBest,
-                      bg: "hsl(var(--brand-amazon))",
-                    },
-                    {
-                      name: "Chewy",
-                      price: results.rec.chewyPrice,
-                      url: chewyUrl(results.rec.query),
-                      best: !amazonBest,
-                      bg: "hsl(var(--brand-chewy))",
-                    },
-                  ];
-                  return stores.map((s) => (
-                    <div
-                      key={s.name}
-                      className={`rounded-2xl border p-4 flex items-center justify-between ${
-                        s.best ? "border-success bg-success/5" : "border-border"
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">{s.name}</span>
-                          {s.best && (
-                            <span className="text-[10px] uppercase tracking-wider rounded-full px-2 py-0.5 bg-success text-white">
-                              최저가
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-2xl font-semibold mt-1">
-                          ${s.price.toFixed(2)}
-                        </div>
-                      </div>
-                      <a href={s.url} target="_blank" rel="noopener noreferrer sponsored">
-                        <Button
-                          className="rounded-xl text-white"
-                          style={{ backgroundColor: s.bg }}
-                        >
-                          {s.name}에서 구매
-                          <ArrowRight className="h-4 w-4 ml-1" />
-                        </Button>
-                      </a>
-                    </div>
-                  ));
-                })()}
+            {/* Subscription */}
+            <div className="mt-8 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 md:p-8 shadow-sm">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    펫 영양 플랜
+                  </div>
+                  <h3 className="text-2xl font-semibold mt-3">
+                    월 $9.99 — 과식·재고 부족 걱정 없이.
+                  </h3>
+                  <ul className="mt-3 space-y-1.5 text-sm">
+                    {[
+                      "하루·월 단위 정확한 급여량 계산",
+                      "사료 사이즈에 맞춘 자동 리필 알림",
+                      "나이 변화에 따른 건강 위험 알림",
+                      "체중·활동량 변화 시 추천 자동 업데이트",
+                    ].map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-primary mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="md:text-right">
+                  <Button
+                    size="lg"
+                    onClick={handleSubscribe}
+                    className="h-12 rounded-2xl px-6 shadow-md shadow-primary/30"
+                  >
+                    <Bell className="h-4 w-4 mr-1" />
+                    플랜 시작하기 — 월 $9.99
+                  </Button>
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    언제든 해지 가능
+                  </p>
+                </div>
               </div>
             </div>
 
+            {/* Food recommendation */}
+            <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-7 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="text-xs text-muted-foreground">
+                    {petName} 맞춤 추천
+                  </div>
+                  <h3 className="text-lg font-semibold mt-0.5">
+                    우리 아이 상태에 딱 맞는 사료
+                  </h3>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {results.rec.bagLbs} lb
+                </span>
+              </div>
+
+              <div className="grid sm:grid-cols-[140px_1fr] gap-4 items-center">
+                <div className="bg-secondary/50 rounded-2xl flex items-center justify-center p-4">
+                  <img
+                    src={results.rec.image}
+                    alt={results.rec.name}
+                    className="max-h-32 object-contain"
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">
+                    {results.rec.brand}
+                  </div>
+                  <div className="font-semibold mt-0.5">{results.rec.name}</div>
+                  <ul className="mt-2 space-y-1">
+                    {results.rec.reasons.slice(0, 2).map((r) => (
+                      <li
+                        key={r}
+                        className="flex items-start gap-2 text-xs text-muted-foreground"
+                      >
+                        <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                        <span>{r}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <a
+                      href={amazonUrl(results.rec.query)}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      className="flex-1"
+                    >
+                      <Button
+                        className="w-full rounded-xl text-white"
+                        style={{ backgroundColor: "hsl(var(--brand-amazon))" }}
+                      >
+                        Amazon에서 구매
+                        <ArrowRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </a>
+                    <a
+                      href={chewyUrl(results.rec.query)}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      className="flex-1"
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-xl"
+                      >
+                        Chewy에서 구매
+                        <ArrowRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
             {/* Subscription */}
             <div className="mt-8 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 md:p-8 shadow-sm">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
