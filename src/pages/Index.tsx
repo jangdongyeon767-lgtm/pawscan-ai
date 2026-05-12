@@ -29,7 +29,7 @@ import { toast } from "@/hooks/use-toast";
 import { CategoryPriceTable } from "@/components/CategoryPriceTable";
 import { PremiumChatbot } from "@/components/PremiumChatbot";
 
-const AMAZON_TAG = "YOUR_AMAZON_ID";
+const AMAZON_TAG = "mycatdogmarket-20";
 const amazonUrl = (q: string) =>
   `https://www.amazon.com/s?k=${encodeURIComponent(q)}&tag=${AMAZON_TAG}`;
 const chewyUrl = (q: string) =>

@@ -9,6 +9,18 @@ import { toast } from "@/hooks/use-toast";
 
 const STORAGE_KEY = "petchat_messages_v1";
 const FUNCTIONS_URL = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/pet-chat`;
+const AMAZON_TAG = "mycatdogmarket-20";
+// Ensure every amazon.com URL in assistant text carries our affiliate tag
+const withAmazonTag = (text: string) =>
+  text.replace(/https?:\/\/(www\.)?amazon\.[a-z.]+\/[^\s)]*/gi, (url) => {
+    try {
+      const u = new URL(url);
+      u.searchParams.set("tag", AMAZON_TAG);
+      return u.toString();
+    } catch {
+      return url;
+    }
+  });
 
 const EXAMPLES = [
   "5살 골든리트리버, 체중 관리에 좋은 사료 추천해줘",
@@ -153,7 +165,7 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                   return (
                     <div key={m.id} className="flex">
                       <div className="max-w-[90%] text-sm prose prose-sm dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-headings:mt-3 prose-headings:mb-1">
-                        <ReactMarkdown>{text}</ReactMarkdown>
+                        <ReactMarkdown>{withAmazonTag(text)}</ReactMarkdown>
                       </div>
                     </div>
                   );
