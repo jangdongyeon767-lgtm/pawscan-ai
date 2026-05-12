@@ -333,7 +333,7 @@ const Index = () => {
       80,
     );
     if (user) {
-      await supabase.from("pet_profiles").insert({
+      const { error: insertErr } = await supabase.from("pet_profiles").insert({
         user_id: user.id,
         name: profile.name || null,
         pet_type: profile.petType,
@@ -344,7 +344,26 @@ const Index = () => {
         health_concerns: profile.health,
         characteristics: `활동량: ${ACTIVITY_LABEL[profile.activity]}`,
       });
-      await loadPets();
+      if (insertErr) {
+        console.error("pet_profiles insert error", insertErr);
+        toast({
+          title: "저장 실패",
+          description: insertErr.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "저장되었습니다",
+          description: "마이펫에서 언제든 수정할 수 있어요.",
+        });
+        await loadPets();
+      }
+    } else {
+      toast({
+        title: "로그인이 필요합니다",
+        description: "프로필을 저장하려면 로그인해 주세요.",
+        variant: "destructive",
+      });
     }
   };
 
