@@ -556,9 +556,26 @@ const Index = () => {
                       min={0}
                       max={30}
                       placeholder="예: 4"
-                      value={profile.ageYears}
+                      value={profile.ageYears === "unknown" ? "" : profile.ageYears}
+                      disabled={profile.ageYears === "unknown"}
                       onChange={(e) => setProfile({ ...profile, ageYears: e.target.value })}
                     />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setProfile({
+                          ...profile,
+                          ageYears: profile.ageYears === "unknown" ? "" : "unknown",
+                        })
+                      }
+                      className={`mt-2 w-full rounded-xl border p-3 text-sm font-medium transition-all ${
+                        profile.ageYears === "unknown"
+                          ? "border-primary bg-primary/5 text-primary"
+                          : "border-border hover:border-primary/40"
+                      }`}
+                    >
+                      모름
+                    </button>
                   </div>
                 </>
               )}
@@ -578,11 +595,28 @@ const Index = () => {
                       min={1}
                       max={250}
                       placeholder="예: 45"
-                      value={profile.weightLbs}
+                      value={profile.weightLbs === "unknown" ? "" : profile.weightLbs}
+                      disabled={profile.weightLbs === "unknown"}
                       onChange={(e) =>
                         setProfile({ ...profile, weightLbs: e.target.value })
                       }
                     />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setProfile({
+                          ...profile,
+                          weightLbs: profile.weightLbs === "unknown" ? "" : "unknown",
+                        })
+                      }
+                      className={`mt-2 w-full rounded-xl border p-3 text-sm font-medium transition-all ${
+                        profile.weightLbs === "unknown"
+                          ? "border-primary bg-primary/5 text-primary"
+                          : "border-border hover:border-primary/40"
+                      }`}
+                    >
+                      모름
+                    </button>
                   </div>
                 </>
               )}
