@@ -1309,6 +1309,9 @@ const Index = () => {
         </div>
       )}
 
+      {/* URL-based product preview */}
+      <ProductUrlPreview />
+
       {/* Footer */}
       <footer className="border-t border-border/60 mt-8">
         <div className="container py-8 text-xs text-muted-foreground space-y-2 text-center">
