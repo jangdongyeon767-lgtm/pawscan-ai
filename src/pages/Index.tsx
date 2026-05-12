@@ -216,7 +216,7 @@ const Index = () => {
 
   const start = (petType?: PetType, keepBoth = false) => {
     if (!user) {
-      navigate("/auth");
+      window.open("/auth", "_blank", "noopener,noreferrer");
       return;
     }
     setResults(null);
