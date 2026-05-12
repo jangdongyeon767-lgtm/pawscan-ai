@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { ProductUrlPreview } from "@/components/ProductUrlPreview";
+
 import { CategoryPriceTable } from "@/components/CategoryPriceTable";
 import { PremiumChatbot } from "@/components/PremiumChatbot";
 
@@ -1403,9 +1403,6 @@ const Index = () => {
           </div>
         </div>
       )}
-
-      {/* URL-based product preview */}
-      <ProductUrlPreview />
 
       {/* Free: category price comparison */}
       <CategoryPriceTable
