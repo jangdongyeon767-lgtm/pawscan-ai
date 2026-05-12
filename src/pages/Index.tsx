@@ -1404,9 +1404,6 @@ const Index = () => {
         </div>
       )}
 
-      {/* URL-based product preview */}
-      <ProductUrlPreview />
-
       {/* Free: category price comparison */}
       <CategoryPriceTable
         petTypes={
