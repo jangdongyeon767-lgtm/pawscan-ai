@@ -398,6 +398,10 @@ const Index = () => {
                 <span className="hidden sm:inline text-xs text-muted-foreground max-w-[160px] truncate">
                   {user.email}
                 </span>
+                <Button variant="ghost" size="sm" onClick={openPets} className="rounded-full">
+                  <PawPrint className="h-4 w-4 mr-1" />
+                  내 펫
+                </Button>
                 <Button variant="ghost" size="sm" onClick={signOut} className="rounded-full">
                   <LogOut className="h-4 w-4 mr-1" />
                   로그아웃
