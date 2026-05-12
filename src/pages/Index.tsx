@@ -213,6 +213,66 @@ const Index = () => {
   const [unlocked, setUnlocked] = useState(false);
   const [hasBoth, setHasBoth] = useState(false);
   const [completedSpecies, setCompletedSpecies] = useState<PetType[]>([]);
+  const [petsOpen, setPetsOpen] = useState(false);
+  const [pets, setPets] = useState<any[]>([]);
+  const [editingPet, setEditingPet] = useState<any | null>(null);
+  const [petsLoading, setPetsLoading] = useState(false);
+
+  const loadPets = async () => {
+    if (!user) return;
+    setPetsLoading(true);
+    const { data, error } = await supabase
+      .from("pet_profiles")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    setPetsLoading(false);
+    if (error) {
+      toast({ title: "불러오기 실패", description: error.message, variant: "destructive" });
+      return;
+    }
+    setPets(data ?? []);
+  };
+
+  const openPets = async () => {
+    setPetsOpen(true);
+    setEditingPet(null);
+    await loadPets();
+  };
+
+  const savePetEdit = async () => {
+    if (!editingPet) return;
+    const { error } = await supabase
+      .from("pet_profiles")
+      .update({
+        name: editingPet.name || null,
+        pet_type: editingPet.pet_type,
+        breed: editingPet.breed || null,
+        age_stage: editingPet.age_stage || "adult",
+        weight: editingPet.weight || null,
+        goal: editingPet.goal || "general",
+        health_concerns: editingPet.health_concerns ?? [],
+        characteristics: editingPet.characteristics || null,
+      })
+      .eq("id", editingPet.id);
+    if (error) {
+      toast({ title: "저장 실패", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "수정되었습니다" });
+    setEditingPet(null);
+    await loadPets();
+  };
+
+  const deletePet = async (id: string) => {
+    const { error } = await supabase.from("pet_profiles").delete().eq("id", id);
+    if (error) {
+      toast({ title: "삭제 실패", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "삭제되었습니다" });
+    await loadPets();
+  };
 
   const start = (petType?: PetType, keepBoth = false) => {
     if (!user) {
