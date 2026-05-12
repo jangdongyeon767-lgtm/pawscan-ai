@@ -466,8 +466,8 @@ const Index = () => {
           {[
             {
               icon: Award,
-              label: "AAFCO 기준",
-              sub: "AAFCO 영양 기준에 맞춘 추천",
+              label: "AAFCO 데이터 매칭",
+              sub: "AAFCO 영양 가이드라인에 따른 데이터 매칭",
             },
             {
               icon: ShieldCheck,
