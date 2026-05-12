@@ -1207,8 +1207,21 @@ const Index = () => {
 
               {!petsLoading && !editingPet && pets.length === 0 && (
                 <div className="text-sm text-muted-foreground text-center py-8">
-                  아직 저장된 펫이 없어요. "무료로 시작하기"로 프로필을 만들어 보세요.
+                  아직 저장된 펫이 없어요. 아래 버튼으로 추가해 보세요.
                 </div>
+              )}
+
+              {!editingPet && (
+                <Button
+                  onClick={() => {
+                    setPetsOpen(false);
+                    setEditingPet(null);
+                    start();
+                  }}
+                  className="w-full rounded-xl"
+                >
+                  + 새 펫 추가하기
+                </Button>
               )}
 
               {!editingPet &&
