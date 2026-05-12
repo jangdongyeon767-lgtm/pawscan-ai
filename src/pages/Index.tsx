@@ -1033,7 +1033,7 @@ const Index = () => {
             </div>
 
             {/* Subscription */}
-            <div className="mt-8 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 md:p-8 shadow-sm">
+            <div id="subscription-cta" className="mt-8 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 md:p-8 shadow-sm scroll-mt-24">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
