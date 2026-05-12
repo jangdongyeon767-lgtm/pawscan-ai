@@ -23,8 +23,8 @@ export default function Auth() {
       });
       if (result.error) {
         toast({
-          title: "로그인 오류",
-          description: (result.error as any).message ?? "다시 시도해 주세요.",
+          title: "Sign-in error",
+          description: (result.error as any).message ?? "Please try again.",
           variant: "destructive",
         });
         setOauthLoading(null);
@@ -33,7 +33,7 @@ export default function Auth() {
       if (result.redirected) return;
       navigate("/");
     } catch (err: any) {
-      toast({ title: "오류", description: err.message, variant: "destructive" });
+      toast({ title: "Error", description: err.message, variant: "destructive" });
       setOauthLoading(null);
     }
   };
@@ -55,24 +55,16 @@ export default function Auth() {
             className="rounded-full"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
-            이전
+            Back
           </Button>
         </div>
       </header>
 
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-sm">
-          <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            이전으로
-          </button>
-
-          <h1 className="text-2xl font-semibold tracking-tight">로그인 / 회원가입</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Sign in or sign up</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            반려동물 프로필을 저장하고 맞춤 추천을 받아보세요.
+            Save your pet profile and get personalized recommendations.
           </p>
 
           <div className="mt-6 space-y-2">
@@ -89,7 +81,7 @@ export default function Auth() {
                 <path d="M5.84 14.11A6.6 6.6 0 0 1 5.5 12c0-.73.13-1.45.34-2.11V7.05H2.18A11 11 0 0 0 1 12c0 1.78.43 3.46 1.18 4.95l3.66-2.84z" fill="#FBBC05"/>
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" fill="#EA4335"/>
               </svg>
-              {oauthLoading === "google" ? "이동 중..." : "Google로 계속하기"}
+              {oauthLoading === "google" ? "Redirecting..." : "Continue with Google"}
             </Button>
             <Button
               type="button"
@@ -100,12 +92,12 @@ export default function Auth() {
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M16.365 1.43c0 1.14-.46 2.23-1.21 3.02-.81.85-2.13 1.51-3.22 1.42-.13-1.1.42-2.25 1.16-3.04.83-.88 2.24-1.52 3.27-1.4zM20.5 17.34c-.55 1.27-.81 1.84-1.52 2.97-.99 1.57-2.39 3.52-4.12 3.54-1.54.02-1.94-1-4.03-.99-2.09.01-2.53 1.01-4.07.99-1.73-.02-3.05-1.78-4.04-3.35C.01 16.16-.27 11.05 1.41 8.34c1.19-1.93 3.07-3.06 4.84-3.06 1.79 0 2.92 1 4.4 1 1.43 0 2.31-1 4.39-1 1.57 0 3.24.86 4.43 2.34-3.89 2.13-3.26 7.7.93 9.72z"/>
               </svg>
-              {oauthLoading === "apple" ? "이동 중..." : "Apple로 계속하기"}
+              {oauthLoading === "apple" ? "Redirecting..." : "Continue with Apple"}
             </Button>
           </div>
 
           <p className="mt-6 text-[11px] text-muted-foreground text-center">
-            계속하면 서비스 약관 및 개인정보 처리방침에 동의하는 것으로 간주됩니다.
+            By continuing, you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>
       </main>
