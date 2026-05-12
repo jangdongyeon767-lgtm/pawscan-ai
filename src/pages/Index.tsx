@@ -399,6 +399,7 @@ const Index = () => {
   }, [user]);
 
   const hasPets = pets.length > 0;
+  const showPetManagerCta = !!user;
 
   const scrollToUpgrade = () => {
     document.getElementById("subscription-cta")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -511,7 +512,7 @@ const Index = () => {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
-            {user && hasPets ? (
+            {showPetManagerCta ? (
               <>
                 <Button
                   size="lg"
@@ -522,7 +523,7 @@ const Index = () => {
                   마이펫 관리하기
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  마이펫에서 우리 아이를 추가하거나 수정할 수 있어요.
+                  저장된 우리 아이를 수정하거나 새 펫을 추가할 수 있어요.
                 </p>
               </>
             ) : (
