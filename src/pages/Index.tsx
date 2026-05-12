@@ -258,6 +258,9 @@ const Index = () => {
     const plan = feedingPlan(profile, rec);
     setResults({ profile, rec, plan });
     setStep(0);
+    setCompletedSpecies((prev) =>
+      prev.includes(profile.petType) ? prev : [...prev, profile.petType],
+    );
     setEmail(user?.email ?? "");
     setTimeout(
       () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }),
