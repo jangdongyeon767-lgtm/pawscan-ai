@@ -1012,17 +1012,21 @@ const Index = () => {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
                     <Sparkles className="h-3.5 w-3.5" />
-                    펫 영양 플랜
+                    얼리버드 사전예약
                   </div>
-                  <h3 className="text-2xl font-semibold mt-3">
-                    월 $9.99 — 과식·재고 부족 걱정 없이.
+                  <h3 className="text-2xl font-semibold mt-3 flex items-center gap-2 flex-wrap">
+                    <span className="line-through text-muted-foreground text-lg">$9.99/월</span>
+                    <span>사전예약가 $6.99/월 평생 고정</span>
                   </h3>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    출시 시 $9.99 → 지금 예약하면 평생 $6.99
+                  </p>
                   <ul className="mt-3 space-y-1.5 text-sm">
                     {[
-                      "하루·월 단위 정확한 급여량 계산",
-                      "사료 사이즈에 맞춘 자동 리필 알림",
-                      "나이 변화에 따른 건강 위험 알림",
-                      "체중·활동량 변화 시 추천 자동 업데이트",
+                      "AI 맞춤 사료 추천 (나이·체중·건강 기반)",
+                      "내가 먹이는 사료 최저가 알림 (Amazon·Chewy·Walmart)",
+                      "사료 리필 타이밍 알림",
+                      "가격 인하 시 즉시 알림",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary mt-0.5" />
@@ -1038,10 +1042,10 @@ const Index = () => {
                     className="h-12 rounded-2xl px-6 shadow-md shadow-primary/30"
                   >
                     <Bell className="h-4 w-4 mr-1" />
-                    플랜 시작하기 — 월 $9.99
+                    사전예약하기 — 평생 $6.99
                   </Button>
                   <p className="text-[11px] text-muted-foreground mt-2">
-                    언제든 해지 가능
+                    선착순 · 카드 등록 없이 시작
                   </p>
                 </div>
               </div>
@@ -1334,30 +1338,30 @@ const Index = () => {
         </div>
       )}
 
-      {/* Free: category price comparison */}
-      <CategoryPriceTable
-        petTypes={
-          pets.length > 0
-            ? (Array.from(new Set(pets.map((p) => p.pet_type))) as ("dog" | "cat")[])
-            : ["dog", "cat"]
-        }
-      />
+      {/* Free: cat food price comparison */}
+      <CategoryPriceTable />
 
-      {/* Premium: AI chatbot */}
+      {/* Pre-order: AI chatbot */}
       <PremiumChatbot isPremium={isPremium} onUpgradeClick={scrollToUpgrade} />
 
+      {/* Waitlist modal */}
+      <WaitlistModal
+        open={waitlistOpen}
+        onClose={() => setWaitlistOpen(false)}
+        defaultEmail={user?.email ?? ""}
+      />
 
       {/* Footer */}
       <footer className="border-t border-border/60 mt-8">
         <div className="container py-8 text-xs text-muted-foreground space-y-2 text-center">
           <p>
-            My Cat &amp; Dog Market은 Amazon Associates 프로그램 참여자로서 적격 구매를
+            WhiskerWell은 Amazon Associates 프로그램 참여자로서 적격 구매를
             통해 수수료를 받습니다. Chewy 등 파트너사로부터도 수수료를 받을 수 있습니다.
           </p>
           <p>
             맞춤 영양 가이드는 정보 제공용이며 수의학적 진단을 대체하지 않습니다.
           </p>
-          <p>© {new Date().getFullYear()} My Cat &amp; Dog Market</p>
+          <p>© {new Date().getFullYear()} WhiskerWell</p>
         </div>
       </footer>
     </div>
