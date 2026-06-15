@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowRight, Award, Dog, Cat, Cookie, Drumstick, ArrowDownUp } from "lucide-react";
+import { ArrowRight, Award, Cat, ArrowDownUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -15,102 +15,54 @@ const amazonUrl = (q: string) =>
 const chewyUrl = (q: string) =>
   `https://www.chewy.com/s?rh=c%3A288&query=${encodeURIComponent(q)}`;
 
-type Category = "dog-food" | "cat-food" | "dog-treats" | "cat-treats";
 type Product = {
   id: string;
-  category: Category;
   brand: string;
   name: string;
-  price: number; // USD lowest known
-  ingredient: string; // 주원료
+  price: number;
+  ingredient: string;
   store: "Amazon" | "Chewy";
   query: string;
 };
 
-const CATEGORIES: { id: Category; label: string; icon: any }[] = [
-  { id: "dog-food", label: "강아지 사료", icon: Dog },
-  { id: "cat-food", label: "고양이 사료", icon: Cat },
-  { id: "dog-treats", label: "강아지 간식", icon: Drumstick },
-  { id: "cat-treats", label: "고양이 간식", icon: Cookie },
-];
-
 const PRODUCTS: Product[] = [
-  // Dog food
-  { id: "df1", category: "dog-food", brand: "Blue Buffalo", name: "Life Protection Adult Chicken", price: 59.99, ingredient: "닭고기", store: "Amazon", query: "Blue Buffalo Life Protection Adult Chicken" },
-  { id: "df2", category: "dog-food", brand: "Hill's Science Diet", name: "Adult Perfect Weight", price: 64.99, ingredient: "닭고기", store: "Amazon", query: "Hill's Science Diet Perfect Weight Adult Dog" },
-  { id: "df3", category: "dog-food", brand: "Purina Pro Plan", name: "Sensitive Skin & Stomach Salmon", price: 74.99, ingredient: "연어", store: "Chewy", query: "Purina Pro Plan Sensitive Skin Stomach Salmon Dog" },
-  { id: "df4", category: "dog-food", brand: "Wellness CORE", name: "Grain Free Original Turkey", price: 69.99, ingredient: "칠면조", store: "Amazon", query: "Wellness CORE Grain Free Original Turkey Dog" },
-  { id: "df5", category: "dog-food", brand: "Royal Canin", name: "Mobility Support Formula", price: 79.99, ingredient: "닭고기", store: "Chewy", query: "Royal Canin Mobility Dog" },
-
-  // Cat food
-  { id: "cf1", category: "cat-food", brand: "Purina ONE", name: "Indoor Advantage Adult", price: 26.99, ingredient: "닭고기", store: "Amazon", query: "Purina ONE Indoor Advantage Cat" },
-  { id: "cf2", category: "cat-food", brand: "Hill's Science Diet", name: "Adult Indoor Chicken", price: 39.99, ingredient: "닭고기", store: "Amazon", query: "Hill's Science Diet Adult Indoor Cat Chicken" },
-  { id: "cf3", category: "cat-food", brand: "Blue Buffalo", name: "Wilderness Indoor Chicken", price: 44.99, ingredient: "닭고기", store: "Chewy", query: "Blue Buffalo Wilderness Indoor Chicken Cat" },
-  { id: "cf4", category: "cat-food", brand: "Wellness CORE", name: "Grain Free Salmon Recipe", price: 49.99, ingredient: "연어", store: "Amazon", query: "Wellness CORE Grain Free Salmon Cat" },
-
-  // Dog treats
-  { id: "dt1", category: "dog-treats", brand: "Milk-Bone", name: "Original Biscuits", price: 9.99, ingredient: "곡물", store: "Amazon", query: "Milk-Bone Original Biscuits Dog Treats" },
-  { id: "dt2", category: "dog-treats", brand: "Greenies", name: "Original Dental Treats", price: 24.99, ingredient: "곡물 + 민트", store: "Chewy", query: "Greenies Original Dental Dog Treats" },
-  { id: "dt3", category: "dog-treats", brand: "Blue Buffalo", name: "Health Bars Bacon Egg Cheese", price: 6.49, ingredient: "베이컨", store: "Amazon", query: "Blue Buffalo Health Bars Bacon Egg Cheese" },
-  { id: "dt4", category: "dog-treats", brand: "Zuke's", name: "Mini Naturals Chicken", price: 12.99, ingredient: "닭고기", store: "Chewy", query: "Zuke's Mini Naturals Chicken Dog Treats" },
-
-  // Cat treats
-  { id: "ct1", category: "cat-treats", brand: "Temptations", name: "Classic Tasty Chicken", price: 4.99, ingredient: "닭고기", store: "Amazon", query: "Temptations Classic Tasty Chicken Cat Treats" },
-  { id: "ct2", category: "cat-treats", brand: "Greenies", name: "Feline Dental Treats Salmon", price: 7.49, ingredient: "연어", store: "Chewy", query: "Greenies Feline Dental Treats Salmon" },
-  { id: "ct3", category: "cat-treats", brand: "Churu", name: "Lickable Tuna Recipe", price: 10.99, ingredient: "참치", store: "Amazon", query: "Churu Lickable Tuna Cat Treats" },
+  { id: "cf1", brand: "Purina ONE", name: "Indoor Advantage Adult", price: 26.99, ingredient: "닭고기", store: "Amazon", query: "Purina ONE Indoor Advantage Cat" },
+  { id: "cf2", brand: "Hill's Science Diet", name: "Adult Indoor Chicken", price: 39.99, ingredient: "닭고기", store: "Amazon", query: "Hill's Science Diet Adult Indoor Cat Chicken" },
+  { id: "cf3", brand: "Blue Buffalo", name: "Wilderness Indoor Chicken", price: 44.99, ingredient: "닭고기", store: "Chewy", query: "Blue Buffalo Wilderness Indoor Chicken Cat" },
+  { id: "cf4", brand: "Wellness CORE", name: "Grain Free Salmon Recipe", price: 49.99, ingredient: "연어", store: "Amazon", query: "Wellness CORE Grain Free Salmon Cat" },
+  { id: "cf5", brand: "Royal Canin", name: "Indoor Adult Dry Cat Food", price: 42.99, ingredient: "닭고기", store: "Chewy", query: "Royal Canin Indoor Adult Cat" },
+  { id: "cf6", brand: "Iams", name: "Proactive Health Indoor Weight & Hairball", price: 22.99, ingredient: "닭고기", store: "Amazon", query: "Iams Proactive Health Indoor Cat" },
+  { id: "cf7", brand: "Hill's Science Diet", name: "Sensitive Stomach & Skin", price: 47.99, ingredient: "연어", store: "Chewy", query: "Hill's Science Diet Sensitive Stomach Cat" },
+  { id: "cf8", brand: "Blue Buffalo", name: "Life Protection Adult Chicken", price: 32.99, ingredient: "닭고기", store: "Amazon", query: "Blue Buffalo Life Protection Adult Cat Chicken" },
 ];
 
 type SortKey = "price-asc" | "price-desc" | "brand";
 
-export function CategoryPriceTable({ petTypes = ["dog", "cat"] }: { petTypes?: ("dog" | "cat")[] } = {}) {
-  const allowed = useMemo(() => {
-    const set = new Set<Category>();
-    if (petTypes.includes("dog")) {
-      set.add("dog-food");
-      set.add("dog-treats");
-    }
-    if (petTypes.includes("cat")) {
-      set.add("cat-food");
-      set.add("cat-treats");
-    }
-    return set;
-  }, [petTypes]);
-  const visibleCategories = CATEGORIES.filter((c) => allowed.has(c.id));
-  const [active, setActive] = useState<Category>(visibleCategories[0]?.id ?? "dog-food");
-  if (!allowed.has(active) && visibleCategories[0]) {
-    // keep active in sync if pet types change
-    setTimeout(() => setActive(visibleCategories[0].id), 0);
-  }
+export function CategoryPriceTable() {
   const [sort, setSort] = useState<SortKey>("price-asc");
   const [brandFilter, setBrandFilter] = useState<string>("all");
   const [ingredientFilter, setIngredientFilter] = useState<string>("all");
 
   const products = useMemo(() => {
-    let list = PRODUCTS.filter((p) => p.category === active);
+    let list = [...PRODUCTS];
     if (brandFilter !== "all") list = list.filter((p) => p.brand === brandFilter);
     if (ingredientFilter !== "all") list = list.filter((p) => p.ingredient === ingredientFilter);
     switch (sort) {
       case "price-asc":
-        list = [...list].sort((a, b) => a.price - b.price);
+        list.sort((a, b) => a.price - b.price);
         break;
       case "price-desc":
-        list = [...list].sort((a, b) => b.price - a.price);
+        list.sort((a, b) => b.price - a.price);
         break;
       case "brand":
-        list = [...list].sort((a, b) => a.brand.localeCompare(b.brand));
+        list.sort((a, b) => a.brand.localeCompare(b.brand));
         break;
     }
     return list;
-  }, [active, sort, brandFilter, ingredientFilter]);
+  }, [sort, brandFilter, ingredientFilter]);
 
-  const brands = useMemo(
-    () => Array.from(new Set(PRODUCTS.filter((p) => p.category === active).map((p) => p.brand))),
-    [active],
-  );
-  const ingredients = useMemo(
-    () => Array.from(new Set(PRODUCTS.filter((p) => p.category === active).map((p) => p.ingredient))),
-    [active],
-  );
+  const brands = useMemo(() => Array.from(new Set(PRODUCTS.map((p) => p.brand))), []);
+  const ingredients = useMemo(() => Array.from(new Set(PRODUCTS.map((p) => p.ingredient))), []);
 
   const cheapest = products[0];
 
@@ -119,36 +71,15 @@ export function CategoryPriceTable({ petTypes = ["dog", "cat"] }: { petTypes?: (
       <div className="mx-auto max-w-5xl">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 rounded-full bg-secondary text-foreground px-3 py-1 text-xs font-medium mb-3">
-            무료 카테고리 가격 비교
+            <Cat className="h-3.5 w-3.5 text-primary" />
+            무료 · 고양이 사료 최저가 비교
           </div>
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            카테고리별 인기 브랜드 최저가
+            고양이 사료 인기 브랜드 최저가
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            가격 · 브랜드 · 원료로 필터링하고 바로 구매하세요.
+            가격 · 브랜드 · 원료로 필터링하고 Amazon · Chewy에서 바로 구매하세요.
           </p>
-        </div>
-
-        {/* Category tabs */}
-        <div className={`grid grid-cols-2 ${visibleCategories.length >= 4 ? "sm:grid-cols-4" : `sm:grid-cols-${visibleCategories.length}`} gap-2 mb-5`}>
-          {visibleCategories.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => {
-                setActive(c.id);
-                setBrandFilter("all");
-                setIngredientFilter("all");
-              }}
-              className={`rounded-2xl border p-4 flex flex-col items-center gap-2 transition-all ${
-                active === c.id
-                  ? "border-primary bg-primary/5 ring-2 ring-primary/30"
-                  : "border-border hover:border-primary/40"
-              }`}
-            >
-              <c.icon className="h-6 w-6 text-primary" />
-              <span className="text-sm font-medium">{c.label}</span>
-            </button>
-          ))}
         </div>
 
         {/* Filters */}

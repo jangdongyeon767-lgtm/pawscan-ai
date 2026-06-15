@@ -28,6 +28,7 @@ import { toast } from "@/hooks/use-toast";
 
 import { CategoryPriceTable } from "@/components/CategoryPriceTable";
 import { PremiumChatbot } from "@/components/PremiumChatbot";
+import { WaitlistModal } from "@/components/WaitlistModal";
 
 const AMAZON_TAG = "mycatdogmarket-20";
 const amazonUrl = (q: string) =>
@@ -200,13 +201,14 @@ const Index = () => {
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<PetProfile>({
     name: "",
-    petType: "dog",
+    petType: "cat",
     breed: "",
     ageYears: "",
     weightLbs: "",
     activity: "medium",
     health: [],
   });
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [results, setResults] = useState<{
     profile: PetProfile;
@@ -277,20 +279,18 @@ const Index = () => {
     await loadPets();
   };
 
-  const start = (petType?: PetType, keepBoth = false) => {
+  const start = (_petType?: PetType, _keepBoth = false) => {
     if (!user) {
       window.open("/auth", "_blank", "noopener,noreferrer");
       return;
     }
     setResults(null);
     setUnlocked(false);
-    if (!keepBoth) {
-      setHasBoth(false);
-      setCompletedSpecies([]);
-    }
+    setHasBoth(false);
+    setCompletedSpecies([]);
     setProfile({
       name: "",
-      petType: petType ?? "dog",
+      petType: "cat",
       breed: "",
       ageYears: "",
       weightLbs: "",
@@ -402,36 +402,15 @@ const Index = () => {
   const showPetManagerCta = !!user;
 
   const scrollToUpgrade = () => {
-    document.getElementById("subscription-cta")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setWaitlistOpen(true);
   };
 
-  const handleSubscribe = async () => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    if (isPremium) {
-      toast({ title: "이미 유료 회원입니다", description: "AI 챗봇을 자유롭게 이용해 보세요." });
-      return;
-    }
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_premium: true })
-      .eq("id", user.id);
-    if (error) {
-      toast({ title: "업그레이드 실패", description: error.message, variant: "destructive" });
-      return;
-    }
-    setIsPremium(true);
-    toast({
-      title: "유료 회원이 되셨어요! 🎉",
-      description: "이제 AI 맞춤 추천 챗봇을 이용할 수 있어요.",
-    });
+  const handleSubscribe = () => {
+    setWaitlistOpen(true);
   };
 
-  const petName =
-    profile.name.trim() || (profile.petType === "dog" ? "우리 강아지" : "우리 고양이");
-  const petLabel = profile.petType === "dog" ? "강아지" : "고양이";
+  const petName = profile.name.trim() || "우리 고양이";
+  const petLabel = "고양이";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -440,7 +419,7 @@ const Index = () => {
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
-              <PawPrint className="h-5 w-5 text-primary" />
+              <Cat className="h-5 w-5 text-primary" />
             </div>
             <span
               className="font-semibold tracking-tight text-base sm:text-lg"
@@ -450,7 +429,7 @@ const Index = () => {
                 letterSpacing: "-0.02em",
               }}
             >
-              My Cat &amp; Dog Market
+              WhiskerWell
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -464,8 +443,8 @@ const Index = () => {
                   {user.email}
                 </span>
                 <Button variant="ghost" size="sm" onClick={openPets} className="rounded-full">
-                  <PawPrint className="h-4 w-4 mr-1" />
-                  내 펫
+                  <Cat className="h-4 w-4 mr-1" />
+                  내 고양이
                 </Button>
                 <Button variant="ghost" size="sm" onClick={signOut} className="rounded-full">
                   <LogOut className="h-4 w-4 mr-1" />
@@ -484,10 +463,10 @@ const Index = () => {
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => navigate("/auth")}
+                  onClick={() => setWaitlistOpen(true)}
                   className="rounded-full"
                 >
-                  시작하기
+                  사전예약하기
                 </Button>
               </>
             )}
@@ -499,47 +478,37 @@ const Index = () => {
       <section className="container py-16 md:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground mb-6 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            맞춤형 펫 영양 &amp; 급여 관리 서비스
+            <Award className="h-3.5 w-3.5 text-primary" />
+            AAFCO 영양 기준으로 매칭되는 고양이 사료
           </div>
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-foreground">
-            우리 아이에게 딱 맞는 사료,
+            우리 고양이한테 딱 맞는 사료를,
             <br className="hidden sm:block" />
-            <span className="text-primary"> 60초 만에 찾기.</span>
+            <span className="text-primary"> 제일 싸게.</span>
           </h1>
           <p className="mt-5 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            견종·묘종, 체중, 건강 상태에 맞춘 개인 맞춤 영양 플랜을 제공합니다.
+            AAFCO 영양 기준으로 우리 고양이에 맞는 사료를 찾고, Amazon·Chewy 최저가까지 한눈에.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
-            {showPetManagerCta ? (
-              <>
-                <Button
-                  size="lg"
-                  onClick={openPets}
-                  className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
-                >
-                  <PawPrint className="mr-2 h-5 w-5" />
-                  마이펫 관리하기
-                </Button>
-                <p className="text-xs text-muted-foreground">
-                  저장된 우리 아이를 수정하거나 새 펫을 추가할 수 있어요.
-                </p>
-              </>
-            ) : (
-              <>
-                <Button
-                  size="lg"
-                  onClick={() => start()}
-                  className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
-                >
-                  무료로 시작하기
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <p className="text-xs text-muted-foreground">
-                  무료 · 60초 소요 · 카드 등록 불필요
-                </p>
-              </>
+            <Button
+              size="lg"
+              onClick={() => setWaitlistOpen(true)}
+              className="h-14 px-8 text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+            >
+              <Bell className="mr-2 h-5 w-5" />
+              사전예약하기 — 평생 $6.99/월
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              출시 시 $9.99 → 지금 예약하면 평생 $6.99 · 카드 등록 불필요
+            </p>
+            {showPetManagerCta && (
+              <button
+                onClick={openPets}
+                className="text-xs text-primary underline-offset-4 hover:underline mt-2"
+              >
+                내 고양이 프로필 관리하기 →
+              </button>
             )}
           </div>
         </div>
@@ -607,60 +576,21 @@ const Index = () => {
             <div className="p-6 space-y-5 min-h-[300px]">
               {step === 1 && (
                 <>
-                  <h3 className="text-lg font-semibold">강아지인가요, 고양이인가요?</h3>
-                  <div className="grid grid-cols-3 gap-3">
-                    {([
-                      { v: "dog", icon: Dog, label: "강아지", both: false },
-                      { v: "cat", icon: Cat, label: "고양이", both: false },
-                      { v: "dog", icon: PawPrint, label: "둘 다", both: true },
-                    ] as const).map((opt, i) => {
-                      const selected =
-                        opt.both ? hasBoth : !hasBoth && profile.petType === opt.v;
-                      return (
-                        <button
-                          key={i}
-                          onClick={() => {
-                            setHasBoth(opt.both);
-                            setProfile({ ...profile, petType: opt.v });
-                          }}
-                          className={`rounded-2xl border p-5 flex flex-col items-center gap-2 transition-all ${
-                            selected
-                              ? "border-primary bg-primary/5 ring-2 ring-primary/30"
-                              : "border-border hover:border-primary/40"
-                          }`}
-                        >
-                          <opt.icon className="h-8 w-8 text-primary" />
-                          <div className="font-medium">{opt.label}</div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {hasBoth && (
-                    <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-xs text-muted-foreground">
-                      둘 다 키우시는군요! 먼저 한 아이의 프로필을 만들고, 완료 후 다른 아이도
-                      추가할 수 있어요. 어느 아이부터 시작할까요?
-                      <div className="mt-2 flex gap-2">
-                        {(["dog", "cat"] as PetType[]).map((pt) => (
-                          <button
-                            key={pt}
-                            onClick={() => setProfile({ ...profile, petType: pt })}
-                            className={`rounded-full border px-3 py-1 ${
-                              profile.petType === pt
-                                ? "border-primary bg-primary text-primary-foreground"
-                                : "border-border"
-                            }`}
-                          >
-                            {pt === "dog" ? "강아지부터" : "고양이부터"}
-                          </button>
-                        ))}
+                  <h3 className="text-lg font-semibold">우리 고양이를 알려주세요</h3>
+                  <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 flex items-center gap-3">
+                    <Cat className="h-8 w-8 text-primary" />
+                    <div className="text-sm">
+                      <div className="font-medium">고양이 사료 추천</div>
+                      <div className="text-muted-foreground text-xs">
+                        WhiskerWell은 고양이 전용 사료 추천 서비스예요.
                       </div>
                     </div>
-                  )}
+                  </div>
                   <div className="space-y-2 pt-2">
                     <Label htmlFor="petName">이름 (선택)</Label>
                     <Input
                       id="petName"
-                      placeholder="예: 베일리"
+                      placeholder="예: 나비"
                       value={profile.name}
                       onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                       maxLength={40}
@@ -671,7 +601,7 @@ const Index = () => {
 
               {step === 2 && (
                 <>
-                  <h3 className="text-lg font-semibold">견종 / 묘종</h3>
+                  <h3 className="text-lg font-semibold">묘종</h3>
                   <p className="text-sm text-muted-foreground">
                     급여량과 장난감 내구성 추천에 활용됩니다.
                   </p>
@@ -1082,17 +1012,21 @@ const Index = () => {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
                     <Sparkles className="h-3.5 w-3.5" />
-                    펫 영양 플랜
+                    얼리버드 사전예약
                   </div>
-                  <h3 className="text-2xl font-semibold mt-3">
-                    월 $9.99 — 과식·재고 부족 걱정 없이.
+                  <h3 className="text-2xl font-semibold mt-3 flex items-center gap-2 flex-wrap">
+                    <span className="line-through text-muted-foreground text-lg">$9.99/월</span>
+                    <span>사전예약가 $6.99/월 평생 고정</span>
                   </h3>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    출시 시 $9.99 → 지금 예약하면 평생 $6.99
+                  </p>
                   <ul className="mt-3 space-y-1.5 text-sm">
                     {[
-                      "하루·월 단위 정확한 급여량 계산",
-                      "사료 사이즈에 맞춘 자동 리필 알림",
-                      "나이 변화에 따른 건강 위험 알림",
-                      "체중·활동량 변화 시 추천 자동 업데이트",
+                      "AI 맞춤 사료 추천 (나이·체중·건강 기반)",
+                      "내가 먹이는 사료 최저가 알림 (Amazon·Chewy·Walmart)",
+                      "사료 리필 타이밍 알림",
+                      "가격 인하 시 즉시 알림",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary mt-0.5" />
@@ -1108,10 +1042,10 @@ const Index = () => {
                     className="h-12 rounded-2xl px-6 shadow-md shadow-primary/30"
                   >
                     <Bell className="h-4 w-4 mr-1" />
-                    플랜 시작하기 — 월 $9.99
+                    사전예약하기 — 평생 $6.99
                   </Button>
                   <p className="text-[11px] text-muted-foreground mt-2">
-                    언제든 해지 가능
+                    선착순 · 카드 등록 없이 시작
                   </p>
                 </div>
               </div>
@@ -1404,30 +1338,30 @@ const Index = () => {
         </div>
       )}
 
-      {/* Free: category price comparison */}
-      <CategoryPriceTable
-        petTypes={
-          pets.length > 0
-            ? (Array.from(new Set(pets.map((p) => p.pet_type))) as ("dog" | "cat")[])
-            : ["dog", "cat"]
-        }
-      />
+      {/* Free: cat food price comparison */}
+      <CategoryPriceTable />
 
-      {/* Premium: AI chatbot */}
+      {/* Pre-order: AI chatbot */}
       <PremiumChatbot isPremium={isPremium} onUpgradeClick={scrollToUpgrade} />
 
+      {/* Waitlist modal */}
+      <WaitlistModal
+        open={waitlistOpen}
+        onClose={() => setWaitlistOpen(false)}
+        defaultEmail={user?.email ?? ""}
+      />
 
       {/* Footer */}
       <footer className="border-t border-border/60 mt-8">
         <div className="container py-8 text-xs text-muted-foreground space-y-2 text-center">
           <p>
-            My Cat &amp; Dog Market은 Amazon Associates 프로그램 참여자로서 적격 구매를
+            WhiskerWell은 Amazon Associates 프로그램 참여자로서 적격 구매를
             통해 수수료를 받습니다. Chewy 등 파트너사로부터도 수수료를 받을 수 있습니다.
           </p>
           <p>
             맞춤 영양 가이드는 정보 제공용이며 수의학적 진단을 대체하지 않습니다.
           </p>
-          <p>© {new Date().getFullYear()} My Cat &amp; Dog Market</p>
+          <p>© {new Date().getFullYear()} WhiskerWell</p>
         </div>
       </footer>
     </div>

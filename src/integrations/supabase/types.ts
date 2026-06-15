@@ -86,6 +86,30 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist: {
+        Row: {
+          clicked_payment: boolean
+          created_at: string
+          email: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          clicked_payment?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          clicked_payment?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
