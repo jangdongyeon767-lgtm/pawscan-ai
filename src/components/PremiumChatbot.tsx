@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import ReactMarkdown from "react-markdown";
-import { Crown, Send, Sparkles, Trash2, Lock, ArrowRight, Check, Bell } from "lucide-react";
+import { Crown, Send, Sparkles, Trash2, Lock, ArrowRight, Check, Bell, Cat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -23,9 +23,9 @@ const withAmazonTag = (text: string) =>
   });
 
 const EXAMPLES = [
-  "5살 골든리트리버, 체중 관리에 좋은 사료 추천해줘",
-  "알러지 있는 페르시안 고양이한테 맞는 간식 알려줘",
-  "관절이 약한 노령견 사료 추천해줘",
+  "5살 페르시안 고양이, 체중 관리에 좋은 사료 추천해줘",
+  "알러지 있는 러시안블루한테 맞는 사료 알려줘",
+  "신장이 약한 노령묘 사료 추천해줘",
 ];
 
 type Props = {
@@ -98,10 +98,10 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium mb-3">
             <Crown className="h-3.5 w-3.5" />
-            유료 서비스 · AI 맞춤 추천 챗봇
+            출시 예정 · AI 맞춤 사료 추천 챗봇
           </div>
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            우리 아이에게 딱 맞는 사료, 챗봇이 골라드려요.
+            우리 고양이에게 딱 맞는 사료, 챗봇이 골라드려요.
           </h2>
         </div>
 
@@ -112,21 +112,22 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
                     <Sparkles className="h-3.5 w-3.5" />
-                    펫 영양 플랜
+                    얼리버드 사전예약
                   </div>
-                  <h3 className="text-2xl font-semibold mt-3 flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-primary" />
-                    월 $9.99 — AI 챗봇과 무제한 추천
+                  <h3 className="text-2xl font-semibold mt-3 flex items-center gap-2 flex-wrap">
+                    <Cat className="h-5 w-5 text-primary" />
+                    <span className="line-through text-muted-foreground text-lg">$9.99/월</span>
+                    <span>사전예약가 $6.99/월 평생 고정</span>
                   </h3>
                   <p className="text-sm text-muted-foreground mt-2 max-w-md">
-                    반려동물의 종, 나이, 건강 상태를 알려주면 AI가 가장 적합한 사료/간식을 추천해 드려요.
+                    출시 시 $9.99 → 지금 예약하면 평생 $6.99. 우리 고양이 나이·체중·건강에 맞춰 AI가 사료를 추천해 드려요.
                   </p>
                   <ul className="mt-4 space-y-1.5 text-sm">
                     {[
-                      "AI 챗봇 맞춤 추천 무제한",
-                      "하루·월 단위 정확한 급여량 계산",
-                      "리필 알림 · 가격 인하 알림",
-                      "체중·활동량 변화 시 추천 자동 업데이트",
+                      "AI 맞춤 사료 추천 (나이·체중·건강 기반)",
+                      "내가 먹이는 사료 최저가 알림 (Amazon·Chewy·Walmart)",
+                      "사료 리필 타이밍 알림",
+                      "가격 인하 시 즉시 알림",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary mt-0.5" />
@@ -142,9 +143,9 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                     className="h-12 rounded-2xl px-6 shadow-md shadow-primary/30"
                   >
                     <Bell className="h-4 w-4 mr-1" />
-                    플랜 시작하기 — 월 $9.99
+                    사전예약하기 — 평생 $6.99
                   </Button>
-                  <p className="text-[11px] text-muted-foreground mt-2">언제든 해지 가능</p>
+                  <p className="text-[11px] text-muted-foreground mt-2">선착순 · 카드 등록 없이 시작</p>
                 </div>
               </div>
             </div>
