@@ -601,7 +601,7 @@ const Index = () => {
 
               {step === 2 && (
                 <>
-                  <h3 className="text-lg font-semibold">견종 / 묘종</h3>
+                  <h3 className="text-lg font-semibold">묘종</h3>
                   <p className="text-sm text-muted-foreground">
                     급여량과 장난감 내구성 추천에 활용됩니다.
                   </p>
