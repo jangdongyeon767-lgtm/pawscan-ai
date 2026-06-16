@@ -1015,11 +1015,11 @@ const Index = () => {
                     얼리버드 사전예약
                   </div>
                   <h3 className="text-2xl font-semibold mt-3 flex items-center gap-2 flex-wrap">
-                    <span className="line-through text-muted-foreground text-lg">$9.99/월</span>
+                    <span className="line-through text-muted-foreground text-lg">$12.99/월</span>
                     <span>사전예약가 $6.99/월 평생 고정</span>
                   </h3>
                   <p className="text-sm text-muted-foreground mt-2">
-                    출시 시 $9.99 → 지금 예약하면 평생 $6.99
+                    출시가 <span className="line-through">$12.99/월</span> → 지금 사전예약하면 평생 <span className="text-primary font-semibold">$6.99/월</span>
                   </p>
                   <ul className="mt-3 space-y-1.5 text-sm">
                     {[
