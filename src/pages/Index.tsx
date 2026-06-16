@@ -500,7 +500,7 @@ const Index = () => {
               사전예약하기 — 평생 $6.99/월
             </Button>
             <p className="text-xs text-muted-foreground">
-              출시 시 $9.99 → 지금 예약하면 평생 $6.99 · 카드 등록 불필요
+              출시가 <span className="line-through">$12.99/월</span> → 지금 사전예약하면 평생 <span className="text-primary font-semibold">$6.99/월</span> · 카드 등록 불필요
             </p>
             {showPetManagerCta && (
               <button
