@@ -48,7 +48,8 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       .from("waitlist")
       .insert({ email: parsed.data, clicked_payment: false });
     setSubmitting(false);
-    if (error) {
+    // Ignore unique-violation (already signed up) — proceed to next step regardless
+    if (error && error.code !== "23505") {
       toast({
         title: "사전예약 실패",
         description: error.message,
@@ -60,13 +61,16 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
   };
 
   const confirmPayment = async () => {
-    setSubmitting(true);
     const parsed = emailSchema.safeParse(email);
-    if (parsed.success) {
-      await supabase
-        .from("waitlist")
-        .insert({ email: parsed.data, clicked_payment: true });
+    if (!parsed.success) {
+      setStep(3);
+      return;
     }
+    setSubmitting(true);
+    await supabase
+      .from("waitlist")
+      .update({ clicked_payment: true })
+      .eq("email", parsed.data);
     setSubmitting(false);
     setStep(3);
   };
@@ -99,12 +103,13 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
                   얼리버드 평생가
                 </div>
                 <h3 className="text-xl font-semibold tracking-tight">
-                  사전예약하고 평생 $6.99/월 확정
+                  출시되면 가장 먼저 알려드릴게요 🐱
                 </h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  출시되면 정가 $9.99이지만, 지금 사전예약하시면 평생{" "}
-                  <span className="text-primary font-medium">$6.99/월</span>{" "}
-                  고정 가격을 보장해드려요.
+                  출시가{" "}
+                  <span className="line-through">$12.99/월</span> → 지금
+                  사전예약하면 평생{" "}
+                  <span className="text-primary font-semibold">$6.99/월</span>
                 </p>
               </div>
               <form onSubmit={submitEmail} className="space-y-2">
@@ -140,17 +145,20 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
                   사전예약 완료!
                 </h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  출시되면 가장 먼저 알려드릴게요.
+                  그런데… 지금 평생가를 확정해두시겠어요?
                 </p>
               </div>
-              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
-                <div className="text-sm font-medium">
-                  지금 $6.99 평생가를 확정하시겠어요?
+              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-center">
+                <div className="text-sm">
+                  출시 후엔{" "}
+                  <span className="line-through text-muted-foreground">
+                    $12.99/월
+                  </span>
+                  이지만,
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  결제 정보를 등록하시면 출시 후에도 평생 $6.99/월이 보장됩니다.
-                  (출시 전까지는 결제되지 않아요.)
-                </p>
+                <div className="text-base font-semibold text-primary mt-1">
+                  지금 확정하면 평생 $6.99/월
+                </div>
               </div>
               <Button
                 onClick={confirmPayment}
@@ -158,7 +166,7 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
                 className="w-full rounded-xl h-12"
               >
                 <CreditCard className="h-4 w-4 mr-1" />
-                결제하고 확정하기
+                지금 $6.99 평생가 확정하기
               </Button>
               <button
                 onClick={onClose}
