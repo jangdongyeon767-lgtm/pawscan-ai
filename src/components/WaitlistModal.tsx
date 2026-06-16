@@ -48,7 +48,8 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       .from("waitlist")
       .insert({ email: parsed.data, clicked_payment: false });
     setSubmitting(false);
-    if (error) {
+    // Ignore unique-violation (already signed up) — proceed to next step regardless
+    if (error && error.code !== "23505") {
       toast({
         title: "사전예약 실패",
         description: error.message,
@@ -60,13 +61,16 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
   };
 
   const confirmPayment = async () => {
-    setSubmitting(true);
     const parsed = emailSchema.safeParse(email);
-    if (parsed.success) {
-      await supabase
-        .from("waitlist")
-        .insert({ email: parsed.data, clicked_payment: true });
+    if (!parsed.success) {
+      setStep(3);
+      return;
     }
+    setSubmitting(true);
+    await supabase
+      .from("waitlist")
+      .update({ clicked_payment: true })
+      .eq("email", parsed.data);
     setSubmitting(false);
     setStep(3);
   };
