@@ -116,11 +116,11 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                   </div>
                   <h3 className="text-2xl font-semibold mt-3 flex items-center gap-2 flex-wrap">
                     <Cat className="h-5 w-5 text-primary" />
-                    <span className="line-through text-muted-foreground text-lg">$9.99/월</span>
+                    <span className="line-through text-muted-foreground text-lg">$12.99/월</span>
                     <span>사전예약가 $6.99/월 평생 고정</span>
                   </h3>
                   <p className="text-sm text-muted-foreground mt-2 max-w-md">
-                    출시 시 $9.99 → 지금 예약하면 평생 $6.99. 우리 고양이 나이·체중·건강에 맞춰 AI가 사료를 추천해 드려요.
+                    출시가 <span className="line-through">$12.99/월</span> → 지금 사전예약하면 평생 <span className="text-primary font-semibold">$6.99/월</span>. 우리 고양이 나이·체중·건강에 맞춰 AI가 사료를 추천해 드려요.
                   </p>
                   <ul className="mt-4 space-y-1.5 text-sm">
                     {[
