@@ -293,39 +293,13 @@ const Index = () => {
               <Award className="h-4 w-4 text-primary" />
               AAFCO 영양 가이드라인에 따른 데이터 매칭
             </div>
-            {user ? (
-              <>
-                <span className="hidden sm:inline text-xs text-muted-foreground max-w-[160px] truncate">
-                  {user.email}
-                </span>
-                <Button variant="ghost" size="sm" onClick={openPets} className="rounded-full">
-                  <Cat className="h-4 w-4 mr-1" />
-                  내 고양이
-                </Button>
-                <Button variant="ghost" size="sm" onClick={signOut} className="rounded-full">
-                  <LogOut className="h-4 w-4 mr-1" />
-                  로그아웃
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate("/auth")}
-                  className="rounded-full"
-                >
-                  로그인
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setWaitlistOpen(true)}
-                  className="rounded-full"
-                >
-                  사전예약하기
-                </Button>
-              </>
-            )}
+            <Button
+              size="sm"
+              onClick={() => setWaitlistOpen(true)}
+              className="rounded-full"
+            >
+              사전예약하기
+            </Button>
           </div>
         </div>
       </header>
@@ -358,14 +332,6 @@ const Index = () => {
             <p className="text-xs text-muted-foreground">
               출시가 <span className="line-through">$12.99/월</span> → 지금 사전예약하면 평생 <span className="text-primary font-semibold">$6.99/월</span> · 카드 등록 불필요
             </p>
-            {showPetManagerCta && (
-              <button
-                onClick={openPets}
-                className="text-xs text-primary underline-offset-4 hover:underline mt-2"
-              >
-                내 고양이 프로필 관리하기 →
-              </button>
-            )}
           </div>
         </div>
 
