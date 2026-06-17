@@ -83,7 +83,7 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
             <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
               <Cat className="h-4 w-4 text-primary" />
             </div>
-            <div className="font-semibold text-sm">WhiskerWell 사전예약</div>
+            <div className="font-semibold text-sm">PurrPick 사전예약</div>
           </div>
           <button
             onClick={onClose}

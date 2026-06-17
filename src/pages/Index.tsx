@@ -285,7 +285,7 @@ const Index = () => {
                 letterSpacing: "-0.02em",
               }}
             >
-              WhiskerWell
+              PurrPick
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -404,7 +404,7 @@ const Index = () => {
                     <div className="text-sm">
                       <div className="font-medium">고양이 사료 추천</div>
                       <div className="text-muted-foreground text-xs">
-                        WhiskerWell은 고양이 전용 사료 추천 서비스예요.
+                        PurrPick은 고양이 전용 사료 추천 서비스예요.
                       </div>
                     </div>
                   </div>
@@ -948,13 +948,13 @@ const Index = () => {
       <footer className="border-t border-border/60 mt-8">
         <div className="container py-8 text-xs text-muted-foreground space-y-2 text-center">
           <p>
-            WhiskerWell은 Amazon Associates 프로그램 참여자로서 적격 구매를
+            PurrPick은 Amazon Associates 프로그램 참여자로서 적격 구매를
             통해 수수료를 받습니다. Chewy 등 파트너사로부터도 수수료를 받을 수 있습니다.
           </p>
           <p>
             맞춤 영양 가이드는 정보 제공용이며 수의학적 진단을 대체하지 않습니다.
           </p>
-          <p>© {new Date().getFullYear()} WhiskerWell</p>
+          <p>© {new Date().getFullYear()} PurrPick</p>
         </div>
       </footer>
     </div>
