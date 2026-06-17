@@ -1,18 +1,14 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   ShieldCheck,
   Lock,
-  PawPrint,
   Star,
   ArrowRight,
   ArrowLeft,
   Check,
   X,
   Cat,
-  Dog,
   Award,
-  LogOut,
   Bell,
   TrendingDown,
   AlertTriangle,
@@ -22,8 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 import { CategoryPriceTable } from "@/components/CategoryPriceTable";
@@ -196,8 +190,6 @@ function feedingPlan(p: PetProfile, r: Recommendation) {
 }
 
 const Index = () => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<PetProfile>({
     name: "",
@@ -216,78 +208,10 @@ const Index = () => {
     plan: ReturnType<typeof feedingPlan>;
   } | null>(null);
   const [unlocked, setUnlocked] = useState(false);
-  const [hasBoth, setHasBoth] = useState(false);
-  const [completedSpecies, setCompletedSpecies] = useState<PetType[]>([]);
-  const [petsOpen, setPetsOpen] = useState(false);
-  const [pets, setPets] = useState<any[]>([]);
-  const [editingPet, setEditingPet] = useState<any | null>(null);
-  const [petsLoading, setPetsLoading] = useState(false);
 
-  const loadPets = async () => {
-    if (!user) return;
-    setPetsLoading(true);
-    const { data, error } = await supabase
-      .from("pet_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-    setPetsLoading(false);
-    if (error) {
-      toast({ title: "불러오기 실패", description: error.message, variant: "destructive" });
-      return;
-    }
-    setPets(data ?? []);
-  };
-
-  const openPets = async () => {
-    setPetsOpen(true);
-    setEditingPet(null);
-    await loadPets();
-  };
-
-  const savePetEdit = async () => {
-    if (!editingPet) return;
-    const { error } = await supabase
-      .from("pet_profiles")
-      .update({
-        name: editingPet.name || null,
-        pet_type: editingPet.pet_type,
-        breed: editingPet.breed || null,
-        age_stage: editingPet.age_stage || "adult",
-        weight: editingPet.weight || null,
-        goal: editingPet.goal || "general",
-        health_concerns: editingPet.health_concerns ?? [],
-        characteristics: editingPet.characteristics || null,
-      })
-      .eq("id", editingPet.id);
-    if (error) {
-      toast({ title: "저장 실패", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "수정되었습니다" });
-    setEditingPet(null);
-    await loadPets();
-  };
-
-  const deletePet = async (id: string) => {
-    const { error } = await supabase.from("pet_profiles").delete().eq("id", id);
-    if (error) {
-      toast({ title: "삭제 실패", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "삭제되었습니다" });
-    await loadPets();
-  };
-
-  const start = (_petType?: PetType, _keepBoth = false) => {
-    if (!user) {
-      window.open("/auth", "_blank", "noopener,noreferrer");
-      return;
-    }
+  const start = () => {
     setResults(null);
     setUnlocked(false);
-    setHasBoth(false);
-    setCompletedSpecies([]);
     setProfile({
       name: "",
       petType: "cat",
@@ -300,16 +224,6 @@ const Index = () => {
     setStep(1);
   };
 
-  useEffect(() => {
-    if (user && sessionStorage.getItem("autostart_wizard") === "1") {
-      sessionStorage.removeItem("autostart_wizard");
-      // Only autostart for brand-new signups (not returning logins)
-      const createdAt = user.created_at ? new Date(user.created_at).getTime() : 0;
-      const isNewSignup = createdAt && Date.now() - createdAt < 60_000;
-      if (isNewSignup) start();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
   const close = () => setStep(0);
   const next = () => setStep((s) => s + 1);
   const back = () => setStep((s) => Math.max(s - 1, 1));
@@ -319,52 +233,15 @@ const Index = () => {
       health: p.health.includes(h) ? p.health.filter((x) => x !== h) : [...p.health, h],
     }));
 
-  const finish = async () => {
+  const finish = () => {
     const rec = pickRecommendation(profile);
     const plan = feedingPlan(profile, rec);
     setResults({ profile, rec, plan });
     setStep(0);
-    setCompletedSpecies((prev) =>
-      prev.includes(profile.petType) ? prev : [...prev, profile.petType],
-    );
-    setEmail(user?.email ?? "");
     setTimeout(
       () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }),
       80,
     );
-    if (user) {
-      const { error: insertErr } = await supabase.from("pet_profiles").insert({
-        user_id: user.id,
-        name: profile.name || null,
-        pet_type: profile.petType,
-        age_stage: profile.ageYears || "adult",
-        breed: profile.breed || null,
-        weight: profile.weightLbs || null,
-        goal: profile.health[0] || "general",
-        health_concerns: profile.health,
-        characteristics: `활동량: ${ACTIVITY_LABEL[profile.activity]}`,
-      });
-      if (insertErr) {
-        console.error("pet_profiles insert error", insertErr);
-        toast({
-          title: "저장 실패",
-          description: insertErr.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "저장되었습니다",
-          description: "마이펫에서 언제든 수정할 수 있어요.",
-        });
-        await loadPets();
-      }
-    } else {
-      toast({
-        title: "로그인이 필요합니다",
-        description: "프로필을 저장하려면 로그인해 주세요.",
-        variant: "destructive",
-      });
-    }
   };
 
   const submitEmail = (e: React.FormEvent) => {
@@ -379,27 +256,6 @@ const Index = () => {
     });
     setUnlocked(true);
   };
-
-  const [isPremium, setIsPremium] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      setIsPremium(false);
-      setPets([]);
-      return;
-    }
-    supabase
-      .from("profiles")
-      .select("is_premium")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => setIsPremium(!!data?.is_premium));
-    loadPets();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const hasPets = pets.length > 0;
-  const showPetManagerCta = !!user;
 
   const scrollToUpgrade = () => {
     setWaitlistOpen(true);
