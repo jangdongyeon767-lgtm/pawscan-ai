@@ -1,18 +1,14 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   ShieldCheck,
   Lock,
-  PawPrint,
   Star,
   ArrowRight,
   ArrowLeft,
   Check,
   X,
   Cat,
-  Dog,
   Award,
-  LogOut,
   Bell,
   TrendingDown,
   AlertTriangle,
@@ -22,8 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 import { CategoryPriceTable } from "@/components/CategoryPriceTable";
@@ -196,8 +190,6 @@ function feedingPlan(p: PetProfile, r: Recommendation) {
 }
 
 const Index = () => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<PetProfile>({
     name: "",
@@ -216,78 +208,10 @@ const Index = () => {
     plan: ReturnType<typeof feedingPlan>;
   } | null>(null);
   const [unlocked, setUnlocked] = useState(false);
-  const [hasBoth, setHasBoth] = useState(false);
-  const [completedSpecies, setCompletedSpecies] = useState<PetType[]>([]);
-  const [petsOpen, setPetsOpen] = useState(false);
-  const [pets, setPets] = useState<any[]>([]);
-  const [editingPet, setEditingPet] = useState<any | null>(null);
-  const [petsLoading, setPetsLoading] = useState(false);
 
-  const loadPets = async () => {
-    if (!user) return;
-    setPetsLoading(true);
-    const { data, error } = await supabase
-      .from("pet_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-    setPetsLoading(false);
-    if (error) {
-      toast({ title: "불러오기 실패", description: error.message, variant: "destructive" });
-      return;
-    }
-    setPets(data ?? []);
-  };
-
-  const openPets = async () => {
-    setPetsOpen(true);
-    setEditingPet(null);
-    await loadPets();
-  };
-
-  const savePetEdit = async () => {
-    if (!editingPet) return;
-    const { error } = await supabase
-      .from("pet_profiles")
-      .update({
-        name: editingPet.name || null,
-        pet_type: editingPet.pet_type,
-        breed: editingPet.breed || null,
-        age_stage: editingPet.age_stage || "adult",
-        weight: editingPet.weight || null,
-        goal: editingPet.goal || "general",
-        health_concerns: editingPet.health_concerns ?? [],
-        characteristics: editingPet.characteristics || null,
-      })
-      .eq("id", editingPet.id);
-    if (error) {
-      toast({ title: "저장 실패", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "수정되었습니다" });
-    setEditingPet(null);
-    await loadPets();
-  };
-
-  const deletePet = async (id: string) => {
-    const { error } = await supabase.from("pet_profiles").delete().eq("id", id);
-    if (error) {
-      toast({ title: "삭제 실패", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "삭제되었습니다" });
-    await loadPets();
-  };
-
-  const start = (_petType?: PetType, _keepBoth = false) => {
-    if (!user) {
-      window.open("/auth", "_blank", "noopener,noreferrer");
-      return;
-    }
+  const start = () => {
     setResults(null);
     setUnlocked(false);
-    setHasBoth(false);
-    setCompletedSpecies([]);
     setProfile({
       name: "",
       petType: "cat",
@@ -300,16 +224,6 @@ const Index = () => {
     setStep(1);
   };
 
-  useEffect(() => {
-    if (user && sessionStorage.getItem("autostart_wizard") === "1") {
-      sessionStorage.removeItem("autostart_wizard");
-      // Only autostart for brand-new signups (not returning logins)
-      const createdAt = user.created_at ? new Date(user.created_at).getTime() : 0;
-      const isNewSignup = createdAt && Date.now() - createdAt < 60_000;
-      if (isNewSignup) start();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
   const close = () => setStep(0);
   const next = () => setStep((s) => s + 1);
   const back = () => setStep((s) => Math.max(s - 1, 1));
@@ -319,52 +233,15 @@ const Index = () => {
       health: p.health.includes(h) ? p.health.filter((x) => x !== h) : [...p.health, h],
     }));
 
-  const finish = async () => {
+  const finish = () => {
     const rec = pickRecommendation(profile);
     const plan = feedingPlan(profile, rec);
     setResults({ profile, rec, plan });
     setStep(0);
-    setCompletedSpecies((prev) =>
-      prev.includes(profile.petType) ? prev : [...prev, profile.petType],
-    );
-    setEmail(user?.email ?? "");
     setTimeout(
       () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }),
       80,
     );
-    if (user) {
-      const { error: insertErr } = await supabase.from("pet_profiles").insert({
-        user_id: user.id,
-        name: profile.name || null,
-        pet_type: profile.petType,
-        age_stage: profile.ageYears || "adult",
-        breed: profile.breed || null,
-        weight: profile.weightLbs || null,
-        goal: profile.health[0] || "general",
-        health_concerns: profile.health,
-        characteristics: `활동량: ${ACTIVITY_LABEL[profile.activity]}`,
-      });
-      if (insertErr) {
-        console.error("pet_profiles insert error", insertErr);
-        toast({
-          title: "저장 실패",
-          description: insertErr.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "저장되었습니다",
-          description: "마이펫에서 언제든 수정할 수 있어요.",
-        });
-        await loadPets();
-      }
-    } else {
-      toast({
-        title: "로그인이 필요합니다",
-        description: "프로필을 저장하려면 로그인해 주세요.",
-        variant: "destructive",
-      });
-    }
   };
 
   const submitEmail = (e: React.FormEvent) => {
@@ -379,27 +256,6 @@ const Index = () => {
     });
     setUnlocked(true);
   };
-
-  const [isPremium, setIsPremium] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      setIsPremium(false);
-      setPets([]);
-      return;
-    }
-    supabase
-      .from("profiles")
-      .select("is_premium")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => setIsPremium(!!data?.is_premium));
-    loadPets();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const hasPets = pets.length > 0;
-  const showPetManagerCta = !!user;
 
   const scrollToUpgrade = () => {
     setWaitlistOpen(true);
@@ -437,39 +293,13 @@ const Index = () => {
               <Award className="h-4 w-4 text-primary" />
               AAFCO 영양 가이드라인에 따른 데이터 매칭
             </div>
-            {user ? (
-              <>
-                <span className="hidden sm:inline text-xs text-muted-foreground max-w-[160px] truncate">
-                  {user.email}
-                </span>
-                <Button variant="ghost" size="sm" onClick={openPets} className="rounded-full">
-                  <Cat className="h-4 w-4 mr-1" />
-                  내 고양이
-                </Button>
-                <Button variant="ghost" size="sm" onClick={signOut} className="rounded-full">
-                  <LogOut className="h-4 w-4 mr-1" />
-                  로그아웃
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate("/auth")}
-                  className="rounded-full"
-                >
-                  로그인
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setWaitlistOpen(true)}
-                  className="rounded-full"
-                >
-                  사전예약하기
-                </Button>
-              </>
-            )}
+            <Button
+              size="sm"
+              onClick={() => setWaitlistOpen(true)}
+              className="rounded-full"
+            >
+              사전예약하기
+            </Button>
           </div>
         </div>
       </header>
@@ -502,14 +332,6 @@ const Index = () => {
             <p className="text-xs text-muted-foreground">
               출시가 <span className="line-through">$12.99/월</span> → 지금 사전예약하면 평생 <span className="text-primary font-semibold">$6.99/월</span> · 카드 등록 불필요
             </p>
-            {showPetManagerCta && (
-              <button
-                onClick={openPets}
-                className="text-xs text-primary underline-offset-4 hover:underline mt-2"
-              >
-                내 고양이 프로필 관리하기 →
-              </button>
-            )}
           </div>
         </div>
 
@@ -896,29 +718,6 @@ const Index = () => {
               </div>
             </div>
 
-            {hasBoth && completedSpecies.length < 2 && (() => {
-              const other: PetType =
-                results.profile.petType === "dog" ? "cat" : "dog";
-              return (
-                <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-4 flex items-center justify-between gap-3">
-                  <div className="text-sm">
-                    <div className="font-medium">
-                      {other === "dog" ? "🐶 강아지" : "🐱 고양이"} 프로필도 추가해 보세요
-                    </div>
-                    <div className="text-muted-foreground">
-                      두 아이 모두 맞춤 추천을 받을 수 있어요.
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => start(other, true)}
-                    className="rounded-full shrink-0"
-                  >
-                    {other === "dog" ? "강아지 추가" : "고양이 추가"}
-                    <ArrowRight className="h-4 w-4 ml-1" />
-                  </Button>
-                </div>
-              );
-            })()}
 
             {/* Feeding plan (locked) */}
             <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-7 shadow-sm relative overflow-hidden">
@@ -1132,223 +931,17 @@ const Index = () => {
         </section>
       )}
 
-      {/* My Pets modal */}
-      {petsOpen && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-lg rounded-3xl border border-border bg-card shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
-            <div className="p-5 border-b border-border flex items-center justify-between">
-              <div>
-                <div className="font-semibold">내 펫</div>
-                <div className="text-xs text-muted-foreground mt-0.5">
-                  {editingPet ? "프로필 수정" : "저장된 반려동물 프로필"}
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  setPetsOpen(false);
-                  setEditingPet(null);
-                }}
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="닫기"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="p-5 overflow-y-auto space-y-4 flex-1">
-              {petsLoading && (
-                <div className="text-sm text-muted-foreground">불러오는 중...</div>
-              )}
-
-              {!petsLoading && !editingPet && pets.length === 0 && (
-                <div className="text-sm text-muted-foreground text-center py-8">
-                  아직 저장된 펫이 없어요. 아래 버튼으로 추가해 보세요.
-                </div>
-              )}
-
-              {!editingPet && (
-                <Button
-                  onClick={() => {
-                    setPetsOpen(false);
-                    setEditingPet(null);
-                    start();
-                  }}
-                  className="w-full rounded-xl"
-                >
-                  + 새 펫 추가하기
-                </Button>
-              )}
-
-              {!editingPet &&
-                pets.map((p) => (
-                  <div
-                    key={p.id}
-                    className="rounded-2xl border border-border p-4 flex items-start justify-between gap-3"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                        {p.pet_type === "dog" ? (
-                          <Dog className="h-5 w-5 text-primary" />
-                        ) : (
-                          <Cat className="h-5 w-5 text-primary" />
-                        )}
-                      </div>
-                      <div className="text-sm">
-                        <div className="font-semibold">
-                          {p.name || (p.pet_type === "dog" ? "이름 없는 강아지" : "이름 없는 고양이")}
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
-                          {p.breed || "품종 미입력"} ·{" "}
-                          {p.age_stage && p.age_stage !== "unknown" ? `${p.age_stage}년` : "나이 모름"} ·{" "}
-                          {p.weight && p.weight !== "unknown" ? `${p.weight} lbs` : "체중 모름"}
-                        </div>
-                        {p.health_concerns?.length > 0 && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {p.health_concerns.join(", ")}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1 shrink-0">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="rounded-full h-8"
-                        onClick={() => setEditingPet({ ...p })}
-                      >
-                        수정
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="rounded-full h-8 text-destructive hover:text-destructive"
-                        onClick={() => deletePet(p.id)}
-                      >
-                        삭제
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-
-              {editingPet && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    {(["dog", "cat"] as PetType[]).map((pt) => (
-                      <button
-                        key={pt}
-                        onClick={() => setEditingPet({ ...editingPet, pet_type: pt })}
-                        className={`rounded-xl border p-3 flex items-center justify-center gap-2 transition-all ${
-                          editingPet.pet_type === pt
-                            ? "border-primary bg-primary/5"
-                            : "border-border"
-                        }`}
-                      >
-                        {pt === "dog" ? <Dog className="h-4 w-4" /> : <Cat className="h-4 w-4" />}
-                        {pt === "dog" ? "강아지" : "고양이"}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="space-y-2">
-                    <Label>이름</Label>
-                    <Input
-                      value={editingPet.name ?? ""}
-                      onChange={(e) => setEditingPet({ ...editingPet, name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>품종</Label>
-                    <Input
-                      value={editingPet.breed ?? ""}
-                      onChange={(e) => setEditingPet({ ...editingPet, breed: e.target.value })}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label>나이 (년)</Label>
-                      <Input
-                        value={editingPet.age_stage === "unknown" ? "" : editingPet.age_stage ?? ""}
-                        placeholder="모름은 비워두기"
-                        onChange={(e) => setEditingPet({ ...editingPet, age_stage: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>체중 (lbs)</Label>
-                      <Input
-                        value={editingPet.weight === "unknown" ? "" : editingPet.weight ?? ""}
-                        placeholder="모름은 비워두기"
-                        onChange={(e) => setEditingPet({ ...editingPet, weight: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>건강 관심사</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {HEALTH_OPTIONS.map((h) => {
-                        const on = (editingPet.health_concerns ?? []).includes(h);
-                        return (
-                          <button
-                            key={h}
-                            type="button"
-                            onClick={() =>
-                              setEditingPet({
-                                ...editingPet,
-                                health_concerns: on
-                                  ? (editingPet.health_concerns ?? []).filter((x: string) => x !== h)
-                                  : [...(editingPet.health_concerns ?? []), h],
-                              })
-                            }
-                            className={`rounded-full border px-3 py-1 text-xs ${
-                              on
-                                ? "border-primary bg-primary text-primary-foreground"
-                                : "border-border"
-                            }`}
-                          >
-                            {h}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="p-5 border-t border-border flex items-center justify-end gap-2">
-              {editingPet ? (
-                <>
-                  <Button variant="ghost" onClick={() => setEditingPet(null)} className="rounded-full">
-                    취소
-                  </Button>
-                  <Button onClick={savePetEdit} className="rounded-full">
-                    <Check className="h-4 w-4 mr-1" />
-                    저장
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={() => setPetsOpen(false)}
-                  className="rounded-full"
-                >
-                  닫기
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Free: cat food price comparison */}
       <CategoryPriceTable />
 
       {/* Pre-order: AI chatbot */}
-      <PremiumChatbot isPremium={isPremium} onUpgradeClick={scrollToUpgrade} />
+      <PremiumChatbot isPremium={false} onUpgradeClick={scrollToUpgrade} />
 
       {/* Waitlist modal */}
       <WaitlistModal
         open={waitlistOpen}
         onClose={() => setWaitlistOpen(false)}
-        defaultEmail={user?.email ?? ""}
+        defaultEmail=""
       />
 
       {/* Footer */}
