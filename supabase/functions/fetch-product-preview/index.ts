@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
   try {
     const { url } = await req.json();
     if (!url || typeof url !== "string" || !/^https?:\/\//i.test(url)) {
-      return new Response(JSON.stringify({ error: "유효한 URL을 입력하세요." }), {
+      return new Response(JSON.stringify({ error: "Please provide a valid URL." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
 
     if (!res.ok) {
       return new Response(
-        JSON.stringify({ error: `상품 페이지를 가져올 수 없습니다 (${res.status})` }),
+        JSON.stringify({ error: `Unable to fetch the product page (${res.status})` }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
         /<meta[^>]+name=["']twitter:title["'][^>]+content=["']([^"']+)["']/i,
         /<meta[^>]+name=["']title["'][^>]+content=["']([^"']+)["']/i,
         /<title[^>]*>([^<]+)<\/title>/i,
-      ]) ?? "상품";
+      ]) ?? "Product";
 
     const image = pickMeta(html, [
       /<meta[^>]+property=["']og:image:secure_url["'][^>]+content=["']([^"']+)["']/i,
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
         title: decode(title).slice(0, 240),
         image: image ? decode(image) : null,
         price: price ? `${currency === "USD" ? "$" : ""}${price.replace(/[^\d.,]/g, "")}` : null,
-        priceLabel: price ? null : "가격 확인",
+        priceLabel: price ? null : "Check price",
         sourceUrl: url,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },

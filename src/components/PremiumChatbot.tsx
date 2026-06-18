@@ -23,9 +23,9 @@ const withAmazonTag = (text: string) =>
   });
 
 const EXAMPLES = [
-  "5살 페르시안 고양이, 체중 관리에 좋은 사료 추천해줘",
-  "알러지 있는 러시안블루한테 맞는 사료 알려줘",
-  "신장이 약한 노령묘 사료 추천해줘",
+  "Recommend a weight-management food for my 5-year-old Persian cat",
+  "What food is best for a Russian Blue with allergies?",
+  "Suggest a food for a senior cat with kidney issues",
 ];
 
 type Props = {
@@ -52,7 +52,7 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
     transport,
     onError: (err) =>
       toast({
-        title: "AI 응답 오류",
+        title: "AI response error",
         description: err.message,
         variant: "destructive",
       }),
@@ -98,10 +98,10 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium mb-3">
             <Crown className="h-3.5 w-3.5" />
-            출시 예정 · AI 맞춤 사료 추천 챗봇
+            Coming soon · AI cat food recommendation chatbot
           </div>
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            우리 고양이에게 딱 맞는 사료, 챗봇이 골라드려요.
+            The perfect food for your cat, hand-picked by our chatbot.
           </h2>
         </div>
 
@@ -112,22 +112,22 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
                     <Sparkles className="h-3.5 w-3.5" />
-                    얼리버드 사전예약
+                    Early-bird pre-order
                   </div>
                   <h3 className="text-2xl font-semibold mt-3 flex items-center gap-2 flex-wrap">
                     <Cat className="h-5 w-5 text-primary" />
-                    <span className="line-through text-muted-foreground text-lg">$12.99/월</span>
-                    <span>사전예약가 $6.99/월 평생 고정</span>
+                    <span className="line-through text-muted-foreground text-lg">$12.99/mo</span>
+                    <span>Pre-order price $6.99/mo locked for life</span>
                   </h3>
                   <p className="text-sm text-muted-foreground mt-2 max-w-md">
-                    출시가 <span className="line-through">$12.99/월</span> → 지금 사전예약하면 평생 <span className="text-primary font-semibold">$6.99/월</span>. 우리 고양이 나이·체중·건강에 맞춰 AI가 사료를 추천해 드려요.
+                    Launch price <span className="line-through">$12.99/mo</span> → pre-order now and pay just <span className="text-primary font-semibold">$6.99/mo</span> for life. Our AI recommends food tailored to your cat's age, weight, and health.
                   </p>
                   <ul className="mt-4 space-y-1.5 text-sm">
                     {[
-                      "AI 맞춤 사료 추천 (나이·체중·건강 기반)",
-                      "내가 먹이는 사료 최저가 알림 (Amazon·Chewy·Walmart)",
-                      "사료 리필 타이밍 알림",
-                      "가격 인하 시 즉시 알림",
+                      "AI food recommendations (age, weight, health)",
+                      "Lowest-price alerts for your cat's food (Amazon, Chewy, Walmart)",
+                      "Refill timing reminders",
+                      "Instant price-drop notifications",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary mt-0.5" />
@@ -143,9 +143,9 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                     className="h-12 rounded-2xl px-6 shadow-md shadow-primary/30"
                   >
                     <Bell className="h-4 w-4 mr-1" />
-                    사전예약하기 — 평생 $6.99
+                    Pre-order — $6.99 for life
                   </Button>
-                  <p className="text-[11px] text-muted-foreground mt-2">선착순 · 카드 등록 없이 시작</p>
+                  <p className="text-[11px] text-muted-foreground mt-2">Limited spots · No card required</p>
                 </div>
               </div>
             </div>
@@ -158,7 +158,7 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                 {messages.length === 0 && (
                   <div className="space-y-3">
                     <div className="text-sm text-muted-foreground">
-                      이렇게 물어보세요:
+                      Try asking:
                     </div>
                     {EXAMPLES.map((ex) => (
                       <button
@@ -197,7 +197,7 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
 
                 {status === "submitted" && (
                   <div className="text-sm text-muted-foreground animate-pulse">
-                    추천을 준비하는 중...
+                    Preparing your recommendation...
                   </div>
                 )}
               </div>
@@ -219,7 +219,7 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                       submit(input);
                     }
                   }}
-                  placeholder="우리 아이 정보를 알려주세요. 예: 3살 푸들, 알러지 있음"
+                  placeholder="Tell us about your cat. e.g. 3-year-old Persian with allergies"
                   className="min-h-[44px] max-h-32 resize-none rounded-xl"
                   disabled={isBusy}
                 />
@@ -230,7 +230,7 @@ export function PremiumChatbot({ isPremium, onUpgradeClick }: Props) {
                   onClick={clearChat}
                   disabled={isBusy || messages.length === 0}
                   className="rounded-xl shrink-0"
-                  aria-label="대화 비우기"
+                  aria-label="Clear conversation"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
