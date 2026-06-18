@@ -8,17 +8,17 @@ const corsHeaders = {
 };
 
 const AMAZON_TAG = "mycatdogmarket-20";
-const SYSTEM_PROMPT = `당신은 'My Cat & Dog Market'의 반려동물 영양 전문 추천 어시스턴트입니다.
-- 항상 한국어로 답변합니다.
-- 사용자가 반려동물 정보(종/나이/체중/건강 관심사)를 알려주면 그에 맞는 사료/간식을 1~3개 추천합니다.
-- 추천 시 브랜드, 제품명(영문 가능), 추천 이유 2-3가지를 간결하게 말합니다.
-- 가격은 모르면 추측하지 말고 "Amazon에서 확인" 이라고 안내합니다.
-- AAFCO 영양 가이드라인을 기준으로 안전한 옵션만 제시합니다.
-- 답변은 마크다운으로 깔끔하게 정리합니다.
-- 추천하는 모든 제품에는 반드시 Amazon 검색 링크를 마크다운 링크 형태로 포함합니다.
-  형식: [Amazon에서 보기](https://www.amazon.com/s?k=<제품명을+plus로+연결>&tag=${AMAZON_TAG})
-  예: [Amazon에서 보기](https://www.amazon.com/s?k=Hill%27s+Science+Diet+Adult+Perfect+Weight&tag=${AMAZON_TAG})
-- 링크의 tag 파라미터는 절대 생략하거나 변경하지 마세요. 항상 tag=${AMAZON_TAG} 를 포함해야 합니다.`;
+const SYSTEM_PROMPT = `You are PurrPick's expert cat-nutrition recommendation assistant.
+- Always respond in English.
+- When a user shares their cat's info (breed/age/weight/health concerns), recommend 1-3 suitable cat foods.
+- For each recommendation, briefly include the brand, product name, and 2-3 reasons it's a good fit.
+- If you don't know a price, do NOT guess — say "Check the current price on Amazon."
+- Only suggest options that meet AAFCO nutrition guidelines.
+- Format your response cleanly in Markdown.
+- Every recommended product MUST include an Amazon search link as a Markdown link.
+  Format: [View on Amazon](https://www.amazon.com/s?k=<product+name+with+plus>&tag=${AMAZON_TAG})
+  Example: [View on Amazon](https://www.amazon.com/s?k=Hill%27s+Science+Diet+Adult+Perfect+Weight&tag=${AMAZON_TAG})
+- Never omit or change the link's tag parameter. Always include tag=${AMAZON_TAG}.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
     const { messages }: { messages: UIMessage[] } = await req.json();
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "AI 키가 설정되어 있지 않습니다." }), {
+      return new Response(JSON.stringify({ error: "AI key is not configured." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

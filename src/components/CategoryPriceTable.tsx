@@ -26,14 +26,14 @@ type Product = {
 };
 
 const PRODUCTS: Product[] = [
-  { id: "cf1", brand: "Purina ONE", name: "Indoor Advantage Adult", price: 26.99, ingredient: "닭고기", store: "Amazon", query: "Purina ONE Indoor Advantage Cat" },
-  { id: "cf2", brand: "Hill's Science Diet", name: "Adult Indoor Chicken", price: 39.99, ingredient: "닭고기", store: "Amazon", query: "Hill's Science Diet Adult Indoor Cat Chicken" },
-  { id: "cf3", brand: "Blue Buffalo", name: "Wilderness Indoor Chicken", price: 44.99, ingredient: "닭고기", store: "Chewy", query: "Blue Buffalo Wilderness Indoor Chicken Cat" },
-  { id: "cf4", brand: "Wellness CORE", name: "Grain Free Salmon Recipe", price: 49.99, ingredient: "연어", store: "Amazon", query: "Wellness CORE Grain Free Salmon Cat" },
-  { id: "cf5", brand: "Royal Canin", name: "Indoor Adult Dry Cat Food", price: 42.99, ingredient: "닭고기", store: "Chewy", query: "Royal Canin Indoor Adult Cat" },
-  { id: "cf6", brand: "Iams", name: "Proactive Health Indoor Weight & Hairball", price: 22.99, ingredient: "닭고기", store: "Amazon", query: "Iams Proactive Health Indoor Cat" },
-  { id: "cf7", brand: "Hill's Science Diet", name: "Sensitive Stomach & Skin", price: 47.99, ingredient: "연어", store: "Chewy", query: "Hill's Science Diet Sensitive Stomach Cat" },
-  { id: "cf8", brand: "Blue Buffalo", name: "Life Protection Adult Chicken", price: 32.99, ingredient: "닭고기", store: "Amazon", query: "Blue Buffalo Life Protection Adult Cat Chicken" },
+  { id: "cf1", brand: "Purina ONE", name: "Indoor Advantage Adult", price: 26.99, ingredient: "Chicken", store: "Amazon", query: "Purina ONE Indoor Advantage Cat" },
+  { id: "cf2", brand: "Hill's Science Diet", name: "Adult Indoor Chicken", price: 39.99, ingredient: "Chicken", store: "Amazon", query: "Hill's Science Diet Adult Indoor Cat Chicken" },
+  { id: "cf3", brand: "Blue Buffalo", name: "Wilderness Indoor Chicken", price: 44.99, ingredient: "Chicken", store: "Chewy", query: "Blue Buffalo Wilderness Indoor Chicken Cat" },
+  { id: "cf4", brand: "Wellness CORE", name: "Grain Free Salmon Recipe", price: 49.99, ingredient: "Salmon", store: "Amazon", query: "Wellness CORE Grain Free Salmon Cat" },
+  { id: "cf5", brand: "Royal Canin", name: "Indoor Adult Dry Cat Food", price: 42.99, ingredient: "Chicken", store: "Chewy", query: "Royal Canin Indoor Adult Cat" },
+  { id: "cf6", brand: "Iams", name: "Proactive Health Indoor Weight & Hairball", price: 22.99, ingredient: "Chicken", store: "Amazon", query: "Iams Proactive Health Indoor Cat" },
+  { id: "cf7", brand: "Hill's Science Diet", name: "Sensitive Stomach & Skin", price: 47.99, ingredient: "Salmon", store: "Chewy", query: "Hill's Science Diet Sensitive Stomach Cat" },
+  { id: "cf8", brand: "Blue Buffalo", name: "Life Protection Adult Chicken", price: 32.99, ingredient: "Chicken", store: "Amazon", query: "Blue Buffalo Life Protection Adult Cat Chicken" },
 ];
 
 type SortKey = "price-asc" | "price-desc" | "brand";
@@ -72,13 +72,13 @@ export function CategoryPriceTable() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 rounded-full bg-secondary text-foreground px-3 py-1 text-xs font-medium mb-3">
             <Cat className="h-3.5 w-3.5 text-primary" />
-            무료 · 고양이 사료 최저가 비교
+            Free · Cat food price comparison
           </div>
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            고양이 사료 인기 브랜드 최저가
+            Lowest prices on top cat food brands
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            가격 · 브랜드 · 원료로 필터링하고 Amazon · Chewy에서 바로 구매하세요.
+            Filter by price, brand, or ingredient and buy directly on Amazon or Chewy.
           </p>
         </div>
 
@@ -86,27 +86,27 @@ export function CategoryPriceTable() {
         <div className="rounded-2xl border border-border bg-card p-4 flex flex-wrap items-center gap-3 mb-4">
           <div className="flex items-center gap-2">
             <ArrowDownUp className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">정렬</span>
+            <span className="text-xs text-muted-foreground">Sort</span>
             <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-              <SelectTrigger className="h-9 w-[150px] rounded-xl">
+              <SelectTrigger className="h-9 w-[170px] rounded-xl">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="price-asc">가격 낮은 순</SelectItem>
-                <SelectItem value="price-desc">가격 높은 순</SelectItem>
-                <SelectItem value="brand">브랜드명</SelectItem>
+                <SelectItem value="price-asc">Price: low to high</SelectItem>
+                <SelectItem value="price-desc">Price: high to low</SelectItem>
+                <SelectItem value="brand">Brand name</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">브랜드</span>
+            <span className="text-xs text-muted-foreground">Brand</span>
             <Select value={brandFilter} onValueChange={setBrandFilter}>
               <SelectTrigger className="h-9 w-[160px] rounded-xl">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 {brands.map((b) => (
                   <SelectItem key={b} value={b}>
                     {b}
@@ -117,13 +117,13 @@ export function CategoryPriceTable() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">원료</span>
+            <span className="text-xs text-muted-foreground">Ingredient</span>
             <Select value={ingredientFilter} onValueChange={setIngredientFilter}>
               <SelectTrigger className="h-9 w-[140px] rounded-xl">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 {ingredients.map((i) => (
                   <SelectItem key={i} value={i}>
                     {i}
@@ -137,16 +137,16 @@ export function CategoryPriceTable() {
         {/* Table */}
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="hidden sm:grid grid-cols-[1.3fr_1fr_0.8fr_0.7fr_auto] gap-3 px-4 py-3 bg-secondary/40 text-xs font-medium text-muted-foreground">
-            <div>제품</div>
-            <div>브랜드</div>
-            <div>원료</div>
-            <div>가격</div>
-            <div>구매</div>
+            <div>Product</div>
+            <div>Brand</div>
+            <div>Ingredient</div>
+            <div>Price</div>
+            <div>Buy</div>
           </div>
           <div className="divide-y divide-border">
             {products.length === 0 && (
               <div className="p-6 text-sm text-muted-foreground text-center">
-                조건에 맞는 제품이 없어요.
+                No products match your filters.
               </div>
             )}
             {products.map((p) => {
@@ -163,7 +163,7 @@ export function CategoryPriceTable() {
                       {isCheapest && (
                         <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider rounded-full px-2 py-0.5 bg-success text-white">
                           <Award className="h-3 w-3" />
-                          최저가
+                          Lowest
                         </span>
                       )}
                     </div>

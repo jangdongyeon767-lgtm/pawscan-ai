@@ -9,7 +9,7 @@ import { z } from "zod";
 const emailSchema = z
   .string()
   .trim()
-  .email({ message: "올바른 이메일을 입력해 주세요" })
+  .email({ message: "Please enter a valid email" })
   .max(255);
 
 type Props = {
@@ -37,7 +37,7 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
     const parsed = emailSchema.safeParse(email);
     if (!parsed.success) {
       toast({
-        title: "이메일 확인",
+        title: "Check your email",
         description: parsed.error.issues[0].message,
         variant: "destructive",
       });
@@ -51,7 +51,7 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
     // Ignore unique-violation (already signed up) — proceed to next step regardless
     if (error && error.code !== "23505") {
       toast({
-        title: "사전예약 실패",
+        title: "Pre-order failed",
         description: error.message,
         variant: "destructive",
       });
@@ -83,12 +83,12 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
             <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
               <Cat className="h-4 w-4 text-primary" />
             </div>
-            <div className="font-semibold text-sm">PurrPick 사전예약</div>
+            <div className="font-semibold text-sm">PurrPick Pre-order</div>
           </div>
           <button
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground"
-            aria-label="닫기"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -100,16 +100,16 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-medium mb-3">
                   <Sparkles className="h-3.5 w-3.5" />
-                  얼리버드 평생가
+                  Early-bird lifetime price
                 </div>
                 <h3 className="text-xl font-semibold tracking-tight">
-                  출시되면 가장 먼저 알려드릴게요 🐱
+                  We'll let you know the moment we launch 🐱
                 </h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  출시가{" "}
-                  <span className="line-through">$12.99/월</span> → 지금
-                  사전예약하면 평생{" "}
-                  <span className="text-primary font-semibold">$6.99/월</span>
+                  Launch price{" "}
+                  <span className="line-through">$12.99/mo</span> → pre-order
+                  now and pay just{" "}
+                  <span className="text-primary font-semibold">$6.99/mo</span> for life
                 </p>
               </div>
               <form onSubmit={submitEmail} className="space-y-2">
@@ -128,10 +128,10 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
                   className="w-full rounded-xl h-12"
                 >
                   <Mail className="h-4 w-4 mr-1" />
-                  {submitting ? "등록 중..." : "사전예약하기"}
+                  {submitting ? "Submitting..." : "Pre-order now"}
                 </Button>
                 <p className="text-[11px] text-muted-foreground text-center">
-                  스팸 없음. 출시 알림과 평생가 안내만 보내드려요.
+                  No spam. Just launch alerts and your lifetime-price details.
                 </p>
               </form>
             </>
@@ -142,22 +142,22 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
               <div className="text-center">
                 <div className="text-4xl mb-2">🎉</div>
                 <h3 className="text-xl font-semibold tracking-tight">
-                  사전예약 완료!
+                  Pre-order confirmed!
                 </h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  그런데… 지금 평생가를 확정해두시겠어요?
+                  One more thing… want to lock in your lifetime price right now?
                 </p>
               </div>
               <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-center">
                 <div className="text-sm">
-                  출시 후엔{" "}
+                  After launch it'll be{" "}
                   <span className="line-through text-muted-foreground">
-                    $12.99/월
+                    $12.99/mo
                   </span>
-                  이지만,
+                  ,
                 </div>
                 <div className="text-base font-semibold text-primary mt-1">
-                  지금 확정하면 평생 $6.99/월
+                  but lock it in now for $6.99/mo for life
                 </div>
               </div>
               <Button
@@ -166,13 +166,13 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
                 className="w-full rounded-xl h-12"
               >
                 <CreditCard className="h-4 w-4 mr-1" />
-                지금 $6.99 평생가 확정하기
+                Lock in $6.99 lifetime price
               </Button>
               <button
                 onClick={onClose}
                 className="w-full text-xs text-muted-foreground hover:text-foreground"
               >
-                나중에 할게요
+                Maybe later
               </button>
             </>
           )}
@@ -182,15 +182,15 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
               <div className="text-center py-4">
                 <div className="text-5xl mb-3">🐱</div>
                 <h3 className="text-xl font-semibold tracking-tight">
-                  곧 출시됩니다!
+                  Launching soon!
                 </h3>
                 <p className="text-sm text-muted-foreground mt-3">
-                  준비되면 가장 먼저 연락드릴게요. 관심 가져주셔서 감사해요.
+                  You'll be the first to hear when we're ready. Thanks for your interest!
                 </p>
               </div>
               <Button onClick={onClose} className="w-full rounded-xl h-12">
                 <Check className="h-4 w-4 mr-1" />
-                확인
+                Got it
               </Button>
             </>
           )}
