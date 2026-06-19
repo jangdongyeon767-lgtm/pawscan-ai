@@ -21,16 +21,19 @@ type Props = {
 export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [email, setEmail] = useState(defaultEmail);
-  const [waitlistId, setWaitlistId] = useState<string | null>(null);
+  const [waitlistId, _setWaitlistId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  void waitlistId;
 
   useEffect(() => {
     if (open) {
       setStep(1);
       setEmail(defaultEmail);
-      setWaitlistId(null);
+      _setWaitlistId(null);
     }
   }, [open, defaultEmail]);
+
 
   if (!open) return null;
 
