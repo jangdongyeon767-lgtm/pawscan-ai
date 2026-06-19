@@ -30,6 +30,8 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
     }
   }, [open, defaultEmail]);
 
+
+
   if (!open) return null;
 
   const submitEmail = async (e: React.FormEvent) => {
@@ -44,11 +46,11 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       return;
     }
     setSubmitting(true);
+    // NOTE: don't use .select() here — anon has no SELECT on waitlist (admin-only).
     const { error } = await supabase
       .from("waitlist")
       .insert({ email: parsed.data, clicked_payment: false });
     setSubmitting(false);
-    // Ignore unique-violation (already signed up) — proceed to next step regardless
     if (error && error.code !== "23505") {
       toast({
         title: "Pre-order failed",
@@ -60,6 +62,7 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
     setStep(2);
   };
 
+
   const confirmPayment = async () => {
     const parsed = emailSchema.safeParse(email);
     if (!parsed.success) {
@@ -67,13 +70,23 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       return;
     }
     setSubmitting(true);
-    await supabase
-      .from("waitlist")
-      .update({ clicked_payment: true })
-      .eq("email", parsed.data);
+    const { error } = await supabase.rpc("mark_waitlist_clicked", {
+      _email: parsed.data,
+    });
     setSubmitting(false);
+    if (error) {
+      console.error("mark_waitlist_clicked failed:", error);
+      toast({
+        title: "Couldn't save your choice",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
     setStep(3);
   };
+
+
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">

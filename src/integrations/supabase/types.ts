@@ -143,6 +143,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      mark_waitlist_clicked: { Args: { _email: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
