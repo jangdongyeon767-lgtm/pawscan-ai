@@ -46,11 +46,10 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       return;
     }
     setSubmitting(true);
-    const { data, error } = await supabase
+    // NOTE: don't use .select() here — anon has no SELECT on waitlist (admin-only).
+    const { error } = await supabase
       .from("waitlist")
-      .insert({ email: parsed.data, clicked_payment: false })
-      .select("id")
-      .maybeSingle();
+      .insert({ email: parsed.data, clicked_payment: false });
     setSubmitting(false);
     if (error && error.code !== "23505") {
       toast({
@@ -60,9 +59,9 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       });
       return;
     }
-    if (data?.id) setWaitlistId(data.id);
     setStep(2);
   };
+
 
   const confirmPayment = async () => {
     const parsed = emailSchema.safeParse(email);
