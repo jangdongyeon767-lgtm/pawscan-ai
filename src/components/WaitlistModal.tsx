@@ -21,12 +21,14 @@ type Props = {
 export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [email, setEmail] = useState(defaultEmail);
+  const [waitlistId, setWaitlistId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
       setStep(1);
       setEmail(defaultEmail);
+      setWaitlistId(null);
     }
   }, [open, defaultEmail]);
 
@@ -44,11 +46,12 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("waitlist")
-      .insert({ email: parsed.data, clicked_payment: false });
+      .insert({ email: parsed.data, clicked_payment: false })
+      .select("id")
+      .maybeSingle();
     setSubmitting(false);
-    // Ignore unique-violation (already signed up) — proceed to next step regardless
     if (error && error.code !== "23505") {
       toast({
         title: "Pre-order failed",
@@ -57,6 +60,7 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       });
       return;
     }
+    if (data?.id) setWaitlistId(data.id);
     setStep(2);
   };
 
@@ -67,13 +71,23 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       return;
     }
     setSubmitting(true);
-    await supabase
-      .from("waitlist")
-      .update({ clicked_payment: true })
-      .eq("email", parsed.data);
+    const query = supabase.from("waitlist").update({ clicked_payment: true });
+    const { error } = waitlistId
+      ? await query.eq("id", waitlistId)
+      : await query.eq("email", parsed.data);
     setSubmitting(false);
+    if (error) {
+      console.error("clicked_payment update failed:", error);
+      toast({
+        title: "Couldn't save your choice",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
     setStep(3);
   };
+
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
