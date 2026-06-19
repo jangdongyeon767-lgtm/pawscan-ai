@@ -70,13 +70,12 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
       return;
     }
     setSubmitting(true);
-    const query = supabase.from("waitlist").update({ clicked_payment: true });
-    const { error } = waitlistId
-      ? await query.eq("id", waitlistId)
-      : await query.eq("email", parsed.data);
+    const { error } = await supabase.rpc("mark_waitlist_clicked", {
+      _email: parsed.data,
+    });
     setSubmitting(false);
     if (error) {
-      console.error("clicked_payment update failed:", error);
+      console.error("mark_waitlist_clicked failed:", error);
       toast({
         title: "Couldn't save your choice",
         description: error.message,
@@ -86,6 +85,7 @@ export function WaitlistModal({ open, onClose, defaultEmail = "" }: Props) {
     }
     setStep(3);
   };
+
 
 
   return (
